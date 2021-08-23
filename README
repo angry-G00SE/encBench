@@ -1,0 +1,10 @@
+1/ Install wxWidgets
+2/ Install wxCharts (Not Free Chart!)
+  - Just run the makefile
+3/ On this folder, type the command:
+  make WXCHARTS=<directory of wxCharts>
+4/
+  chmod +x benchmarkGUI
+  
+5/
+  ./benchmarkGUI
