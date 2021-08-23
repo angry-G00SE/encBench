@@ -146,7 +146,7 @@ MyFrame::MyFrame(const wxString& name, const wxPoint& pos, const wxSize& size)
   wxButton* unselectAll = new wxButton(bottom_right, ID_UNSELECT_ALL, "Unselect All");
 
   //////////////////////////////////////////////////////////////////////////////////////////////////////
-  // Setting-up  Choice Boxes
+  // Setting-up Choice Boxes
   //////////////////////////////////////////////////////////////////////////////////////////////////////
   wxChoice* dataType = new wxChoice(bottom_right, ID_DATA_CHOICE);
   dataType->Insert("Time", 0);
@@ -171,6 +171,16 @@ MyFrame::MyFrame(const wxString& name, const wxPoint& pos, const wxSize& size)
   inputSizeChoice->SetSelection(2);
 
   //////////////////////////////////////////////////////////////////////////////////////////////////////
+  // Setting-up Check Boxes
+  //////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  wxCheckBox* defaultCB = new wxCheckBox(left, ID_DEFAULT_CB, wxString("Default"));
+  defaultCB->SetValue(true);
+
+  wxCheckBox* timeCB = new wxCheckBox(left, ID_TIME_CB, wxString("Time"));
+  wxCheckBox* iterCB = new wxCheckBox(left, ID_ITERATION_CB, wxString("Iteration"));
+
+  //////////////////////////////////////////////////////////////////////////////////////////////////////
   // Setting-up input boxes
   //////////////////////////////////////////////////////////////////////////////////////////////////////
   threadsInput = new wxTextCtrl (left, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize,
@@ -182,15 +192,21 @@ MyFrame::MyFrame(const wxString& name, const wxPoint& pos, const wxSize& size)
   //////////////////////////////////////////////////////////////////////////////////////////////////////
   // Setting-up  Sizers
   //////////////////////////////////////////////////////////////////////////////////////////////////////
-  wxBoxSizer* main_bottom_sizer = new wxBoxSizer(wxHORIZONTAL);
-  main_bottom_sizer->Add(inputSizeChoice, 0, wxLEFT, 5);
-  main_bottom_sizer->Add(benchCountInput, 1, wxLEFT | wxRIGHT, 5);
-  main_bottom_sizer->Add(threadsInput, 1, wxRIGHT, 5);
+  wxBoxSizer* main_nd_sizer = new wxBoxSizer(wxHORIZONTAL);
+  main_nd_sizer->Add(defaultCB, 0);
+  main_nd_sizer->Add(timeCB, 0);
+  main_nd_sizer->Add(iterCB, 0);
+
+  wxBoxSizer* main_st_sizer = new wxBoxSizer(wxHORIZONTAL);
+  main_st_sizer->Add(inputSizeChoice, 0, wxLEFT, 5);
+  main_st_sizer->Add(benchCountInput, 1, wxLEFT | wxRIGHT, 5);
+  main_st_sizer->Add(threadsInput, 1, wxRIGHT, 5);
 
   wxBoxSizer* main_sizer = new wxBoxSizer(wxVERTICAL);
   main_sizer->Add(searchBox, 0, wxEXPAND | wxTOP | wxLEFT | wxRIGHT, 5);
   main_sizer->Add(algoSelectionList, 1, wxEXPAND | wxALL, 5);
-  main_sizer->Add(main_bottom_sizer, 0, wxEXPAND | wxBOTTOM, 5);
+  main_sizer->Add(main_nd_sizer, 0, wxEXPAND);
+  main_sizer->Add(main_st_sizer, 0, wxEXPAND | wxBOTTOM, 5);
   main_sizer->Add(runBench, 0, wxALIGN_RIGHT | wxRIGHT | wxBOTTOM, 5);
 
   left->SetSizerAndFit(main_sizer);
@@ -399,7 +415,7 @@ wxString MyFrame::getGOCommand(const wxString& method) {
 
   // if user selected something use the selected option, else use default option
   if( inputSizeChoice->GetSelection() != wxNOT_FOUND) {
-    inputSize << inputSizeChoice->GetSelection();
+    inputSize = inputSizeChoice->GetStringSelection();
   }
 
   // if user provided the number of threads use the provided number, else use default option
@@ -411,6 +427,9 @@ wxString MyFrame::getGOCommand(const wxString& method) {
   if (!benchCount.IsEmpty()) {
 
   }
+
+  // generate GOLANG command here
+  cmd << "go " << "put options here and bla bla bla";
 
   return cmd;
 }

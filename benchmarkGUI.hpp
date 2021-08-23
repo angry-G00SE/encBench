@@ -8,7 +8,10 @@ enum {
   ID_UNSELECT_ALL = 3,
   ID_GRAPH_CHOICE = 4,
   ID_DATA_CHOICE = 5,
-  ID_BYTE_CHOICE = 6
+  ID_BYTE_CHOICE = 6,
+  ID_DEFAULT_CB = 7,
+  ID_TIME_CB = 8,
+  ID_ITERATION_CB = 9
 };
 
 enum input {
