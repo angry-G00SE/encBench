@@ -11,6 +11,12 @@ enum {
   ID_BYTE_CHOICE = 6
 };
 
+enum input {
+  NBR_ITERATION,
+  TIME,
+  NONE
+};
+
 enum language {
   C,
   CPP,
@@ -35,7 +41,13 @@ private:
   wxListView* algoInfoList;
   wxTextCtrl* threadsInput;
   wxTextCtrl* benchCountInput;
-  wxChoice* inputSize;
+  wxChoice* inputSizeChoice;
+
+  wxString threads;         // user input for number of threads to use
+  wxString benchCount;      // user input for number of times the benchmark will be executed
+                            // on the corresponding encryption method
+
+  input providedInput;
 
   language currentLanguge;
 

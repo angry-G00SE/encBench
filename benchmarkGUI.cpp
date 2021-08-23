@@ -39,7 +39,7 @@ bool MyApp::OnInit() {
 }
 
 MyFrame::MyFrame(const wxString& name, const wxPoint& pos, const wxSize& size)
-        : wxFrame(nullptr, wxID_ANY, name, pos, size) {
+        : wxFrame(nullptr, wxID_ANY, name, pos, size), providedInput{NONE} {
 
   SetMinSize(wxSize(640, 480));
   currentLanguge = language::GO;    // currently only Go
@@ -161,14 +161,14 @@ MyFrame::MyFrame(const wxString& name, const wxPoint& pos, const wxSize& size)
   graphType->Insert("Boxplot", 1);
   graphType->SetSelection(0);
 
-  inputSize = new wxChoice(left, ID_BYTE_CHOICE);
-  inputSize->Insert("10", 0);
-  inputSize->Insert("100", 1);
-  inputSize->Insert("1000", 2);
-  inputSize->Insert("10,000", 3);
-  inputSize->Insert("100,000", 4);
-  inputSize->Insert("1,000,000", 5);
-  inputSize->SetSelection(2);
+  inputSizeChoice = new wxChoice(left, ID_BYTE_CHOICE);
+  inputSizeChoice->Insert("10", 0);
+  inputSizeChoice->Insert("100", 1);
+  inputSizeChoice->Insert("1000", 2);
+  inputSizeChoice->Insert("10,000", 3);
+  inputSizeChoice->Insert("100,000", 4);
+  inputSizeChoice->Insert("1,000,000", 5);
+  inputSizeChoice->SetSelection(2);
 
   //////////////////////////////////////////////////////////////////////////////////////////////////////
   // Setting-up input boxes
@@ -178,16 +178,12 @@ MyFrame::MyFrame(const wxString& name, const wxPoint& pos, const wxSize& size)
 
   benchCountInput = new wxTextCtrl (left, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize,
                                             wxTE_PROCESS_ENTER);
-  //////////////////////////////////////////////////////////////////////////////////////////////////////
-  // Setting-up a test for Charts
-  //////////////////////////////////////////////////////////////////////////////////////////////////////
-
 
   //////////////////////////////////////////////////////////////////////////////////////////////////////
   // Setting-up  Sizers
   //////////////////////////////////////////////////////////////////////////////////////////////////////
   wxBoxSizer* main_bottom_sizer = new wxBoxSizer(wxHORIZONTAL);
-  main_bottom_sizer->Add(inputSize, 0, wxLEFT, 5);
+  main_bottom_sizer->Add(inputSizeChoice, 0, wxLEFT, 5);
   main_bottom_sizer->Add(benchCountInput, 1, wxLEFT | wxRIGHT, 5);
   main_bottom_sizer->Add(threadsInput, 1, wxRIGHT, 5);
 
@@ -388,9 +384,33 @@ std::vector<wxString> MyFrame::getBenchResults(const wxString& method) {
   }
 }
 
-// Most important function, complete ASAP!
+
+///////////////////////////////////////////////////////////////////////////////////////
+// this function generates a GOLANG command to benchmark method with provided option(s)
+//
+// method: encryption method name
+//
+// returns a wxString (std::string )
+///////////////////////////////////////////////////////////////////////////////////////
 wxString MyFrame::getGOCommand(const wxString& method) {
-  std::string cmd;
+
+  wxString cmd;             // string that will hold the generated GOLANG command
+  wxString inputSize;       // user's chosen number of bytes if any
+
+  // if user selected something use the selected option, else use default option
+  if( inputSizeChoice->GetSelection() != wxNOT_FOUND) {
+    inputSize << inputSizeChoice->GetSelection();
+  }
+
+  // if user provided the number of threads use the provided number, else use default option
+  if (!threads.IsEmpty()) {
+
+  }
+
+  // if user provided the number of times to run the benchmark use the provided number, else use default option
+  if (!benchCount.IsEmpty()) {
+
+  }
 
   return cmd;
 }
