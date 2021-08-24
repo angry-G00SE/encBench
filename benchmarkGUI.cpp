@@ -13,6 +13,7 @@
 #endif
 
 #include "benchmarkGUI.hpp"
+#include "wxHorizontalBarChart.hpp"
 
 #if defined(_WIN32)
 #elif defined(__linux__)
@@ -190,8 +191,38 @@ MyFrame::MyFrame(const wxString& name, const wxPoint& pos, const wxSize& size)
                                             wxTE_PROCESS_ENTER);
 
   //////////////////////////////////////////////////////////////////////////////////////////////////////
+  // testing chart library
+  //////////////////////////////////////////////////////////////////////////////////////////////////////
+  wxHorizontalBarChart* chart_test = new wxHorizontalBarChart(upper_mid);
+
+  wxString s1 = "Yo Mama!";
+  wxString s2 = "HEEEEEEY";
+  wxString s3 = "Holyyyy!";
+  wxString s4 = "hihihihi!";
+
+  chart_test->AddChart(s1, 35.8);
+  chart_test->AddChart(s2, 120.8);
+  chart_test->AddChart(s3, 180.4);
+  chart_test->AddChart(s3, 100);
+  chart_test->AddChart(s4, 200);
+  chart_test->AddChart(s1, 10);
+  chart_test->AddChart(s2, 400);
+  chart_test->AddChart(wxT("some method"), 300);
+  chart_test->AddChart(wxT("another method"), 240);
+
+  chart_test->UpdateMax();
+
+  chart_test->SetXAxisLabel(wxT("Time (ms)"));
+  chart_test->SetYAxisLabel(wxT("Method Name"));
+  chart_test->SetTitle(wxT("Time Mean"));
+
+  //////////////////////////////////////////////////////////////////////////////////////////////////////
   // Setting-up  Sizers
   //////////////////////////////////////////////////////////////////////////////////////////////////////
+  wxBoxSizer* chart_sizer = new wxBoxSizer(wxVERTICAL);
+  chart_sizer->Add(chart_test, 1, wxEXPAND);
+  upper_mid->SetSizerAndFit(chart_sizer);
+
   wxBoxSizer* main_nd_sizer = new wxBoxSizer(wxHORIZONTAL);
   main_nd_sizer->Add(defaultCB, 0);
   main_nd_sizer->Add(timeCB, 0);
@@ -225,11 +256,6 @@ MyFrame::MyFrame(const wxString& name, const wxPoint& pos, const wxSize& size)
   nd_sizer->Add(algoInfoList, 1, wxEXPAND | wxALL, 5);
   nd_sizer->Add(nd_right_sizer, 0, wxEXPAND);
   bottom_right->SetSizerAndFit(nd_sizer);
-
-  wxBoxSizer* charts_sizer = new wxBoxSizer(wxHORIZONTAL);
-  //charts_sizer->Add(boxplotChartCtrl, 1, wxEXPAND);
-  upper_mid->SetSizerAndFit(charts_sizer);
-
 
 }
 
