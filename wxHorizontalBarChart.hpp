@@ -15,13 +15,10 @@ private:
   wxString labelX, labelY;    // Put Unit between parenthesis here
   double maxValue;            // usefull for determining horizontal expansion + x_axis scale
 
-  const int minWidth = 350;
-  const int minHeight = 150;
-
   wxFont chartFont;
 
 public:
-  wxHorizontalBarChart(wxFrame* parent);
+  wxHorizontalBarChart(wxWindow* parent);
 
   void paintNow();
 

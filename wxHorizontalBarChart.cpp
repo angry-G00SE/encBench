@@ -23,9 +23,8 @@ wxBEGIN_EVENT_TABLE(wxHorizontalBarChart, wxWindow)
 wxEND_EVENT_TABLE()
 
 
-wxHorizontalBarChart::wxHorizontalBarChart(wxFrame* parent) :
+wxHorizontalBarChart::wxHorizontalBarChart(wxWindow* parent) :
   wxWindow(parent, wxID_ANY), maxValue{0.0} {
-    SetMinSize(wxSize(minWidth, minHeight));
   }
 
 void wxHorizontalBarChart::OnPaint(wxPaintEvent& evt) {
