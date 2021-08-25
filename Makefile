@@ -2,16 +2,19 @@
 CXX = g++
 
 # Compiler Flags
-CXXFLAGS = -g -c
+CXXFLAGS = -c
 
-benchmark : benchmarkGUI.o wxHorizontalBarChart.o
-	$(CXX) -g -o $@ $^ `wx-config --cxxflags --libs`
+benchmark : benchmarkGUI.o wxHorizontalBarChart.o wxGoBenchOptions.o
+	$(CXX) -o $@ $^ `wx-config --libs`
+
+wxGoBenchOptions.o : wxGoBenchOptions.cpp wxGoBenchOptions.hpp
+	$(CXX) $(CXXFLAGS) `wx-config --cxxflags` $<
 
 wxHorizontalBarChart.o : wxHorizontalBarChart.cpp wxHorizontalBarChart.hpp
-	$(CXX) $(CXXFLAGS) `wx-config --cxxflags --libs` $<
+	$(CXX) $(CXXFLAGS) `wx-config --cxxflags` $<
 
-benchmarkGUI.o : benchmarkGUI.cpp benchmarkGUI.hpp wxHorizontalBarChart.hpp
-	$(CXX) $(CXXFLAGS) `wx-config --cxxflags --libs` $<
+benchmarkGUI.o : benchmarkGUI.cpp benchmarkGUI.hpp wxHorizontalBarChart.hpp wxGoBenchOptions.hpp
+	$(CXX) $(CXXFLAGS) `wx-config --cxxflags` $<
 
 .PHONY = clean
 

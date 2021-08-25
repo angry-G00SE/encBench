@@ -14,6 +14,7 @@
 
 #include "benchmarkGUI.hpp"
 #include "wxHorizontalBarChart.hpp"
+#include "wxGoBenchOptions.hpp"
 
 #if defined(_WIN32)
 #elif defined(__linux__)
@@ -40,7 +41,7 @@ bool MyApp::OnInit() {
 }
 
 MyFrame::MyFrame(const wxString& name, const wxPoint& pos, const wxSize& size)
-        : wxFrame(nullptr, wxID_ANY, name, pos, size), providedInput{NONE} {
+        : wxFrame(nullptr, wxID_ANY, name, pos, size) {
 
   SetMinSize(wxSize(640, 480));
   currentLanguge = language::GO;    // currently only Go
@@ -83,9 +84,6 @@ MyFrame::MyFrame(const wxString& name, const wxPoint& pos, const wxSize& size)
   wxPanel* bottom_right = new wxPanel(right_splitter);
   wxPanel* upper_mid = new wxPanel(upper_right_splitter);
   wxPanel* top_right_right = new wxPanel(upper_right_splitter);
-
-  //left->SetBackgroundColour(wxColor(200, 100, 100));
-  upper_mid->SetBackgroundColour(wxColor(100, 200, 100));
 
   //////////////////////////////////////////////////////////////////////////////////////////////////////
   // Splitters Configuration
@@ -150,45 +148,15 @@ MyFrame::MyFrame(const wxString& name, const wxPoint& pos, const wxSize& size)
   // Setting-up Choice Boxes
   //////////////////////////////////////////////////////////////////////////////////////////////////////
   wxChoice* dataType = new wxChoice(bottom_right, ID_DATA_CHOICE);
-  dataType->Insert("Time", 0);
-  dataType->Insert("Allocated", 1);
-  dataType->Insert("Gen 0", 2);
-  dataType->Insert("Gen 1", 3);
-  dataType->Insert("Gen 2", 4);
+  dataType->Insert("Median", 0);
+  dataType->Insert("Nbr Alloc", 1);
+  dataType->Insert("Byte per Alloc", 2);
   dataType->SetSelection(0);
 
   wxChoice* graphType = new wxChoice(bottom_right, ID_GRAPH_CHOICE);
   graphType->Insert("Barchart", 0);
   graphType->Insert("Boxplot", 1);
   graphType->SetSelection(0);
-
-  inputSizeChoice = new wxChoice(left, ID_BYTE_CHOICE);
-  inputSizeChoice->Insert("10", 0);
-  inputSizeChoice->Insert("100", 1);
-  inputSizeChoice->Insert("1000", 2);
-  inputSizeChoice->Insert("10,000", 3);
-  inputSizeChoice->Insert("100,000", 4);
-  inputSizeChoice->Insert("1,000,000", 5);
-  inputSizeChoice->SetSelection(2);
-
-  //////////////////////////////////////////////////////////////////////////////////////////////////////
-  // Setting-up Check Boxes
-  //////////////////////////////////////////////////////////////////////////////////////////////////////
-
-  wxCheckBox* defaultCB = new wxCheckBox(left, ID_DEFAULT_CB, wxString("Default"));
-  defaultCB->SetValue(true);
-
-  wxCheckBox* timeCB = new wxCheckBox(left, ID_TIME_CB, wxString("Time"));
-  wxCheckBox* iterCB = new wxCheckBox(left, ID_ITERATION_CB, wxString("Iteration"));
-
-  //////////////////////////////////////////////////////////////////////////////////////////////////////
-  // Setting-up input boxes
-  //////////////////////////////////////////////////////////////////////////////////////////////////////
-  threadsInput = new wxTextCtrl (left, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize,
-                                            wxTE_PROCESS_ENTER);
-
-  benchCountInput = new wxTextCtrl (left, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize,
-                                            wxTE_PROCESS_ENTER);
 
   //////////////////////////////////////////////////////////////////////////////////////////////////////
   // testing chart library
@@ -223,23 +191,10 @@ MyFrame::MyFrame(const wxString& name, const wxPoint& pos, const wxSize& size)
   chart_sizer->Add(chart_test, 1, wxEXPAND);
   upper_mid->SetSizerAndFit(chart_sizer);
 
-  wxBoxSizer* main_nd_sizer = new wxBoxSizer(wxHORIZONTAL);
-  main_nd_sizer->Add(defaultCB, 0);
-  main_nd_sizer->Add(timeCB, 0);
-  main_nd_sizer->Add(iterCB, 0);
-
-  wxBoxSizer* main_st_sizer = new wxBoxSizer(wxHORIZONTAL);
-  main_st_sizer->Add(inputSizeChoice, 0, wxLEFT, 5);
-  main_st_sizer->Add(benchCountInput, 1, wxLEFT | wxRIGHT, 5);
-  main_st_sizer->Add(threadsInput, 1, wxRIGHT, 5);
-
   wxBoxSizer* main_sizer = new wxBoxSizer(wxVERTICAL);
   main_sizer->Add(searchBox, 0, wxEXPAND | wxTOP | wxLEFT | wxRIGHT, 5);
   main_sizer->Add(algoSelectionList, 1, wxEXPAND | wxALL, 5);
-  main_sizer->Add(main_nd_sizer, 0, wxEXPAND);
-  main_sizer->Add(main_st_sizer, 0, wxEXPAND | wxBOTTOM, 5);
   main_sizer->Add(runBench, 0, wxALIGN_RIGHT | wxRIGHT | wxBOTTOM, 5);
-
   left->SetSizerAndFit(main_sizer);
 
   wxBoxSizer* nd_bottom_right_sizer = new wxBoxSizer(wxHORIZONTAL);
@@ -437,25 +392,25 @@ std::vector<wxString> MyFrame::getBenchResults(const wxString& method) {
 wxString MyFrame::getGOCommand(const wxString& method) {
 
   wxString cmd;             // string that will hold the generated GOLANG command
-  wxString inputSize;       // user's chosen number of bytes if any
+  //wxString inputSize;       // user's chosen number of bytes if any
 
-  // if user selected something use the selected option, else use default option
-  if( inputSizeChoice->GetSelection() != wxNOT_FOUND) {
-    inputSize = inputSizeChoice->GetStringSelection();
-  }
+  //// if user selected something use the selected option, else use default option
+  //if( inputSizeChoice->GetSelection() != wxNOT_FOUND) {
+  //  inputSize = inputSizeChoice->GetStringSelection();
+  //}
 
-  // if user provided the number of threads use the provided number, else use default option
-  if (!threads.IsEmpty()) {
+  //// if user provided the number of threads use the provided number, else use default option
+  //if (!threads.IsEmpty()) {
 
-  }
+  //}
 
-  // if user provided the number of times to run the benchmark use the provided number, else use default option
-  if (!benchCount.IsEmpty()) {
+  //// if user provided the number of times to run the benchmark use the provided number, else use default option
+  //if (!benchCount.IsEmpty()) {
 
-  }
+  //}
 
-  // generate GOLANG command here
-  cmd << "go " << "put options here and bla bla bla";
+  //// generate GOLANG command here
+  //cmd << "go " << "put options here and bla bla bla";
 
   return cmd;
 }

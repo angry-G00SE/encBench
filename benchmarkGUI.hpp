@@ -42,15 +42,6 @@ private:
   // these are declared here because these will be called outside MyFrame constructor
   wxListView* algoSelectionList;
   wxListView* algoInfoList;
-  wxTextCtrl* threadsInput;
-  wxTextCtrl* benchCountInput;
-  wxChoice* inputSizeChoice;
-
-  wxString threads;         // user input for number of threads to use
-  wxString benchCount;      // user input for number of times the benchmark will be executed
-                            // on the corresponding encryption method
-
-  input providedInput;
 
   language currentLanguge;
 
