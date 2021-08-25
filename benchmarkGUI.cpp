@@ -187,6 +187,8 @@ MyFrame::MyFrame(const wxString& name, const wxPoint& pos, const wxSize& size)
   //////////////////////////////////////////////////////////////////////////////////////////////////////
   // Setting-up  Sizers
   //////////////////////////////////////////////////////////////////////////////////////////////////////
+  wxGoBenchOptions* test_window = new wxGoBenchOptions(left);
+
   wxBoxSizer* chart_sizer = new wxBoxSizer(wxVERTICAL);
   chart_sizer->Add(chart_test, 1, wxEXPAND);
   upper_mid->SetSizerAndFit(chart_sizer);
@@ -194,6 +196,7 @@ MyFrame::MyFrame(const wxString& name, const wxPoint& pos, const wxSize& size)
   wxBoxSizer* main_sizer = new wxBoxSizer(wxVERTICAL);
   main_sizer->Add(searchBox, 0, wxEXPAND | wxTOP | wxLEFT | wxRIGHT, 5);
   main_sizer->Add(algoSelectionList, 1, wxEXPAND | wxALL, 5);
+  main_sizer->Add(test_window, 0, wxEXPAND);
   main_sizer->Add(runBench, 0, wxALIGN_RIGHT | wxRIGHT | wxBOTTOM, 5);
   left->SetSizerAndFit(main_sizer);
 

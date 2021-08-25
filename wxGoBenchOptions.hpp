@@ -27,8 +27,6 @@ private:
   wxCheckBox* memProfile;
   wxCheckBox* cpuProfile;
 
-  wxBoxSizer* main_sizer;
-
   void OnRadio(wxCommandEvent& event);
 };
 
