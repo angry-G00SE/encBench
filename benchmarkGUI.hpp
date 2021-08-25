@@ -44,6 +44,7 @@ private:
   wxListView* algoSelectionList;
   wxListView* algoInfoList;
   wxPanel* left;
+  wxGoBenchOptions* go_options_win;
 
   language currentLanguge;
 

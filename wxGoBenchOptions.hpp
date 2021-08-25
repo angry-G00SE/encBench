@@ -12,11 +12,15 @@ enum {
 
 class wxGoBenchOptions : public wxWindow {
 public:
+  wxRadioBox* GetInputChoiceRadio();
+  wxChoice* GetInputSize();
+  wxChoice* GetInputIter();
+  wxTextCtrl* GetInputTime();
+  wxTextCtrl* GetInputThreads();
+  wxTextCtrl* GetInputBench();
+
   wxGoBenchOptions(wxWindow* parent);
 
-  DECLARE_EVENT_TABLE()
-
-private:
   wxRadioBox* inputChoiceRadio;
 
   wxChoice* inputIterChoice;
@@ -25,6 +29,8 @@ private:
   wxTextCtrl* inputThreads;
   wxTextCtrl* inputBench;
 
+  DECLARE_EVENT_TABLE()
+private:
   wxCheckBox* memProfile;
   wxCheckBox* cpuProfile;
 

@@ -13,9 +13,10 @@
   #include <wx/wx.h>
 #endif
 
+#include "wxGoBenchOptions.hpp"
 #include "benchmarkGUI.hpp"
 #include "wxHorizontalBarChart.hpp"
-#include "wxGoBenchOptions.hpp"
+
 
 #if defined(_WIN32)
 #elif defined(__linux__)
@@ -170,7 +171,7 @@ MyFrame::MyFrame(const wxString& name, const wxPoint& pos, const wxSize& size)
   // setting-up language-dependant benchmark tool options
   //////////////////////////////////////////////////////////////////////////////////////////////////////
   // currently only Go
-  wxGoBenchOptions* test_window = new wxGoBenchOptions(options_pane_win);
+  go_options_win = new wxGoBenchOptions(options_pane_win);
 
   //////////////////////////////////////////////////////////////////////////////////////////////////////
   // testing chart library
@@ -202,7 +203,7 @@ MyFrame::MyFrame(const wxString& name, const wxPoint& pos, const wxSize& size)
   // Setting-up  Sizers
   //////////////////////////////////////////////////////////////////////////////////////////////////////
   wxBoxSizer* paneSz = new wxBoxSizer(wxVERTICAL);
-  paneSz->Add(test_window, 1, wxEXPAND);
+  paneSz->Add(go_options_win, 1, wxEXPAND);
   options_pane_win->SetSizer(paneSz);
   paneSz->SetSizeHints(options_pane_win);
 
@@ -214,7 +215,7 @@ MyFrame::MyFrame(const wxString& name, const wxPoint& pos, const wxSize& size)
   wxBoxSizer* main_sizer = new wxBoxSizer(wxVERTICAL);
   main_sizer->Add(searchBox, 0, wxEXPAND | wxTOP | wxLEFT | wxRIGHT, 5);
   main_sizer->Add(algoSelectionList, 1, wxEXPAND | wxALL, 5);
-  main_sizer->Add(options_pane, 0, wxEXPAND);
+  main_sizer->Add(options_pane, 0, wxEXPAND | wxBOTTOM, 5);
   main_sizer->Add(runBench, 0, wxALIGN_RIGHT | wxRIGHT | wxBOTTOM, 5);
   left->SetSizerAndFit(main_sizer);
 
@@ -413,25 +414,42 @@ std::vector<wxString> MyFrame::getBenchResults(const wxString& method) {
 wxString MyFrame::getGOCommand(const wxString& method) {
 
   wxString cmd;             // string that will hold the generated GOLANG command
-  //wxString inputSize;       // user's chosen number of bytes if any
+  cmd << "go ";
+  wxString inputSz;       // user's chosen number of bytes if any
 
-  //// if user selected something use the selected option, else use default option
-  //if( inputSizeChoice->GetSelection() != wxNOT_FOUND) {
-  //  inputSize = inputSizeChoice->GetStringSelection();
-  //}
+  // if user chose nbr-of-iteration or time as input, if data is entered, use it. Else use default option.
+  switch(go_options_win->GetInputChoiceRadio()->GetSelection()) {
 
-  //// if user provided the number of threads use the provided number, else use default option
-  //if (!threads.IsEmpty()) {
+    // iterations selected.
+    case 1: // append cmd with: go_options_win->inputIterChoice->GetStringSelection();
+            break;
 
-  //}
+    // time selected
+    case 2: if (!go_options_win->GetInputTime()->IsEmpty())
+              // append cmd with: go_options_win->inputTime->GetValue();
+            break;
 
-  //// if user provided the number of times to run the benchmark use the provided number, else use default option
-  //if (!benchCount.IsEmpty()) {
+    // else use default options
+    default: break;
+  }
 
-  //}
+  // if user selected something use the selected option, else use default option
+  if( go_options_win->GetInputSize()->GetSelection() != 0) {
+    inputSz = go_options_win->GetInputSize()->GetStringSelection();
+  }
 
-  //// generate GOLANG command here
-  //cmd << "go " << "put options here and bla bla bla";
+  // if user provided the number of threads use the provided number, else use default option
+  if (!go_options_win->GetInputThreads()->IsEmpty()) {
+    // append cmd with: go_options_win->inputThreads->GetValue();
+  }
+
+  // if user provided the number of times to run the benchmark use the provided number, else use default option
+  if (!go_options_win->GetInputBench()->IsEmpty()) {
+    // append cmd with: go_options_win->inputBrench->GetValue();
+  }
+
+  // lastly, generate GOLANG command here
+  cmd << "put options here and bla bla bla";
 
   return cmd;
 }
