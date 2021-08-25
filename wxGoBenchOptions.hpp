@@ -4,8 +4,10 @@
 #define ID_GO_WINDOW 10000
 
 enum {
-  ID_RADIO_BOX = 0,
-  ID_INPUT_TIME = 1
+  ID_RADIO_BOX = 100,
+  ID_INPUT_TIME = 101,
+  ID_INPUT_THREADS = 102,
+  ID_INPUT_BENCH = 103
 };
 
 class wxGoBenchOptions : public wxWindow {
@@ -18,9 +20,8 @@ private:
   wxRadioBox* inputChoiceRadio;
 
   wxChoice* inputIterChoice;
+  wxChoice* inputSize;
   wxTextCtrl* inputTime;
-
-  wxChoice* inputSizeChoice;
   wxTextCtrl* inputThreads;
   wxTextCtrl* inputBench;
 

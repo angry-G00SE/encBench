@@ -11,7 +11,8 @@ enum {
   ID_BYTE_CHOICE = 6,
   ID_DEFAULT_CB = 7,
   ID_TIME_CB = 8,
-  ID_ITERATION_CB = 9
+  ID_ITERATION_CB = 9,
+  ID_COLLAPSIBLE_PANE = 10
 };
 
 enum input {
@@ -42,6 +43,7 @@ private:
   // these are declared here because these will be called outside MyFrame constructor
   wxListView* algoSelectionList;
   wxListView* algoInfoList;
+  wxPanel* left;
 
   language currentLanguge;
 
@@ -93,6 +95,9 @@ private:
   //  Menu Event handlers
   void OnAbout(wxCommandEvent&);
   void OnExit(wxCommandEvent&);
+
+  // more event handles
+  void OnCollapsiblePaneChange(wxCollapsiblePaneEvent& event);
 
   // event table attached to this window/class
   wxDECLARE_EVENT_TABLE();

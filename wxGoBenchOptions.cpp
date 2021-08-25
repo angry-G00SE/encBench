@@ -31,6 +31,36 @@ wxGoBenchOptions::wxGoBenchOptions(wxWindow* parent) :
     inputTime = new wxTextCtrl(this, ID_INPUT_TIME, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER);
     inputTime->Disable();
 
+    wxStaticText* sizeText = new wxStaticText(this, wxID_ANY, wxString("Size"));
+    inputSize = new wxChoice(this, wxID_ANY);
+    inputSize->Append(wxString("128 bytes"));
+    inputSize->Append(wxString("1 Mb"));
+    inputSize->Append(wxString("5 Mb"));
+    inputSize->Append(wxString("50 Mb"));
+    inputSize->Append(wxString("100 Mb"));
+    inputSize->Append(wxString("200 Mb"));
+
+    wxStaticText* threadText = new wxStaticText(this, wxID_ANY, wxString("Nbr Threads"));
+    inputThreads = new wxTextCtrl(this, ID_INPUT_THREADS);
+
+    wxStaticText* benchText = new wxStaticText(this, wxID_ANY, wxString("Nbr Benchmarks"));
+    inputBench = new wxTextCtrl(this, ID_INPUT_THREADS);
+
+    //////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Setting-up  Sizers
+    //////////////////////////////////////////////////////////////////////////////////////////////////////
+    wxBoxSizer* go_size_sizer = new wxBoxSizer(wxHORIZONTAL);
+    go_size_sizer->Add(sizeText, 0, wxLEFT | wxRIGHT | wxBOTTOM | wxALIGN_CENTER_VERTICAL, 5);
+    go_size_sizer->Add(inputSize, 1, wxEXPAND | wxLEFT | wxRIGHT | wxBOTTOM, 5);
+
+    wxBoxSizer* go_thread_sizer = new wxBoxSizer(wxHORIZONTAL);
+    go_thread_sizer->Add(threadText, 0, wxLEFT | wxRIGHT | wxBOTTOM | wxALIGN_CENTER_VERTICAL, 5);
+    go_thread_sizer->Add(inputThreads, 1, wxEXPAND | wxLEFT | wxRIGHT | wxBOTTOM, 5);
+
+    wxBoxSizer* go_bench_sizer = new wxBoxSizer(wxHORIZONTAL);
+    go_bench_sizer->Add(benchText, 0, wxLEFT | wxRIGHT | wxBOTTOM | wxALIGN_CENTER_VERTICAL, 5);
+    go_bench_sizer->Add(inputBench, 1,  wxEXPAND | wxLEFT | wxRIGHT | wxBOTTOM, 5);
+
     wxBoxSizer* go_iter_sizer = new wxBoxSizer(wxHORIZONTAL);
     go_iter_sizer->Add(iterText, 0, wxLEFT | wxRIGHT | wxBOTTOM | wxALIGN_CENTER_VERTICAL, 5);
     go_iter_sizer->Add(inputIterChoice, 1, wxEXPAND | wxLEFT | wxRIGHT | wxBOTTOM, 5);
@@ -41,8 +71,11 @@ wxGoBenchOptions::wxGoBenchOptions(wxWindow* parent) :
 
     wxBoxSizer* go_main_sizer = new wxBoxSizer(wxVERTICAL);
     go_main_sizer->Add(inputChoiceRadio, 0, wxEXPAND | wxALL, 5);
-    go_main_sizer->Add(go_iter_sizer, 0, wxEXPAND);
-    go_main_sizer->Add(go_time_sizer, 0, wxEXPAND);
+    go_main_sizer->Add(go_iter_sizer, 1, wxEXPAND);
+    go_main_sizer->Add(go_time_sizer, 1, wxEXPAND);
+    go_main_sizer->Add(go_size_sizer, 1, wxEXPAND);
+    go_main_sizer->Add(go_thread_sizer, 1, wxEXPAND);
+    go_main_sizer->Add(go_bench_sizer, 1, wxEXPAND);
 
     this->SetSizerAndFit(go_main_sizer);
 }

@@ -3,6 +3,7 @@
 #include <wx/splitter.h>
 #include <wx/srchctrl.h>
 #include <wx/thread.h>
+#include <wx/collpane.h>
 
 #include <string>
 #include <memory>
@@ -31,6 +32,7 @@ wxBEGIN_EVENT_TABLE(MyFrame, wxFrame)
   EVT_BUTTON(ID_RUN_BENCHMARK, MyFrame::runBenchmark)
   EVT_BUTTON(ID_DRAW_GRAPH, MyFrame::OnDraw)
   EVT_SEARCHCTRL_SEARCH_BTN(ID_SEARCH_BOX, MyFrame::OnSearch)
+  EVT_COLLAPSIBLEPANE_CHANGED(ID_COLLAPSIBLE_PANE, MyFrame::OnCollapsiblePaneChange)
 wxEND_EVENT_TABLE()
 
 bool MyApp::OnInit() {
@@ -80,7 +82,7 @@ MyFrame::MyFrame(const wxString& name, const wxPoint& pos, const wxSize& size)
   ///////////////////////////////////////////////////////////////////////////////////////////////////////
   // Setting-up Panels
   ///////////////////////////////////////////////////////////////////////////////////////////////////////
-  wxPanel* left = new wxPanel(main_splitter);
+  left = new wxPanel(main_splitter);
   wxPanel* bottom_right = new wxPanel(right_splitter);
   wxPanel* upper_mid = new wxPanel(upper_right_splitter);
   wxPanel* top_right_right = new wxPanel(upper_right_splitter);
@@ -159,6 +161,18 @@ MyFrame::MyFrame(const wxString& name, const wxPoint& pos, const wxSize& size)
   graphType->SetSelection(0);
 
   //////////////////////////////////////////////////////////////////////////////////////////////////////
+  // setting-up collapsible pane
+  //////////////////////////////////////////////////////////////////////////////////////////////////////
+  wxCollapsiblePane* options_pane = new wxCollapsiblePane(left, ID_COLLAPSIBLE_PANE, wxString("Tool Option(s)"));
+  wxWindow* options_pane_win = options_pane->GetPane();
+
+  //////////////////////////////////////////////////////////////////////////////////////////////////////
+  // setting-up language-dependant benchmark tool options
+  //////////////////////////////////////////////////////////////////////////////////////////////////////
+  // currently only Go
+  wxGoBenchOptions* test_window = new wxGoBenchOptions(options_pane_win);
+
+  //////////////////////////////////////////////////////////////////////////////////////////////////////
   // testing chart library
   //////////////////////////////////////////////////////////////////////////////////////////////////////
   wxHorizontalBarChart* chart_test = new wxHorizontalBarChart(upper_mid);
@@ -187,7 +201,11 @@ MyFrame::MyFrame(const wxString& name, const wxPoint& pos, const wxSize& size)
   //////////////////////////////////////////////////////////////////////////////////////////////////////
   // Setting-up  Sizers
   //////////////////////////////////////////////////////////////////////////////////////////////////////
-  wxGoBenchOptions* test_window = new wxGoBenchOptions(left);
+  wxBoxSizer* paneSz = new wxBoxSizer(wxVERTICAL);
+  paneSz->Add(test_window, 1, wxEXPAND);
+  options_pane_win->SetSizer(paneSz);
+  paneSz->SetSizeHints(options_pane_win);
+
 
   wxBoxSizer* chart_sizer = new wxBoxSizer(wxVERTICAL);
   chart_sizer->Add(chart_test, 1, wxEXPAND);
@@ -196,7 +214,7 @@ MyFrame::MyFrame(const wxString& name, const wxPoint& pos, const wxSize& size)
   wxBoxSizer* main_sizer = new wxBoxSizer(wxVERTICAL);
   main_sizer->Add(searchBox, 0, wxEXPAND | wxTOP | wxLEFT | wxRIGHT, 5);
   main_sizer->Add(algoSelectionList, 1, wxEXPAND | wxALL, 5);
-  main_sizer->Add(test_window, 0, wxEXPAND);
+  main_sizer->Add(options_pane, 0, wxEXPAND);
   main_sizer->Add(runBench, 0, wxALIGN_RIGHT | wxRIGHT | wxBOTTOM, 5);
   left->SetSizerAndFit(main_sizer);
 
@@ -427,4 +445,8 @@ std::vector<wxString> MyFrame::getGOBenchResults(const wxString& method, const w
   #elif defined(__APPLE__) && defined(__MACH__)
   #endif
   return v;
+}
+
+void MyFrame::OnCollapsiblePaneChange(wxCollapsiblePaneEvent& event) {
+  left->Layout();
 }
