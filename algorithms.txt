@@ -1,0 +1,16 @@
+MD5:Message-Digest Algorithm 5
+SHA1:Message-Digest Algorithm 5
+SHA224:Message-Digest Algorithm 5
+SHA256:Message-Digest Algorithm 5
+SHA384:Message-Digest Algorithm 5
+SHA512:Message-Digest Algorithm 5
+SHA3_224:Message-Digest Algorithm 5
+SHA3_256:Message-Digest Algorithm 5
+SHA3_384:Message-Digest Algorithm 5
+SHA3_512:Message-Digest Algorithm 5
+SHA512_224:Message-Digest Algorithm 5
+SHA512_256:Message-Digest Algorithm 5
+BLAKE2s_256:Message-Digest Algorithm 5
+BLAKE2b_256:Message-Digest Algorithm 5
+BLAKE2b_384:Message-Digest Algorithm 5
+BLAKE2b_512:Message-Digest Algorithm 5

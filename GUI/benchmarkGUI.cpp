@@ -5,6 +5,7 @@
 #include <wx/thread.h>
 #include <wx/collpane.h>
 
+#include <fstream>
 #include <string>
 #include <memory>
 #include <unordered_set>
@@ -106,21 +107,16 @@ MyFrame::MyFrame(const wxString& name, const wxPoint& pos, const wxSize& size)
   // Setting-up list of Cryptography Algorithms
   //////////////////////////////////////////////////////////////////////////////////////////////////////
   algoSelectionList = new wxListView(left);
-  algoSelectionList->AppendColumn("ID");
-  algoSelectionList->AppendColumn("Name");
+  algoSelectionList->AppendColumn("Method");
   algoSelectionList->AppendColumn("Description");
 
-  algoSelectionList->SetColumnWidth(0, 40);
-  algoSelectionList->SetColumnWidth(1, 80);
-  algoSelectionList->SetColumnWidth(2, 150);
+  algoSelectionList->SetColumnWidth(0, 80);
+  algoSelectionList->SetColumnWidth(1, 150);
 
   algoSelectionList->Bind(wxEVT_LIST_COL_CLICK, [this](wxListEvent& evt) {
     this->sortByColumn(evt.GetColumn());
   });
-
-  addListItem(123, "MD5", "description here!");
-  addListItem(456, "SHA1", "2nd item!");
-  addListItem(789, "SHA224", "3rd item!");
+  populateAlgoList();
 
   //////////////////////////////////////////////////////////////////////////////////////////////////////
   // Initializing Selected Algorithm Info list
@@ -235,14 +231,13 @@ MyFrame::MyFrame(const wxString& name, const wxPoint& pos, const wxSize& size)
 
 }
 
-void MyFrame::addListItem(int id, const std::string& name, const std::string& description) {
+void MyFrame::addListItem(const std::string& method, const std::string& description) {
   int index = algoSelectionList->GetItemCount();
 
-  algoSelectionList->InsertItem(index, std::to_string(id));
-  algoSelectionList->SetItem(index, 1, name);
-  algoSelectionList->SetItem(index, 2, description);
+  algoSelectionList->InsertItem(index, method);
+  algoSelectionList->SetItem(index, 1, description);
 
-  ItemData data {id, name, description};
+  ItemData data {method, description};
   auto dataPtr = std::make_unique<ItemData>(data);
 
   algoSelectionList->SetItemData(index, reinterpret_cast<wxIntPtr>(dataPtr.get()));
@@ -252,11 +247,9 @@ void MyFrame::addListItem(int id, const std::string& name, const std::string& de
 
 void MyFrame::sortByColumn(int index) {
   switch (index) {
-    case 0: algoSelectionList->SortItems(&idSortCallBack, sortDirection);
+    case 0: algoSelectionList->SortItems(&nameSortCallBack, sortDirection);
             break;
-    case 1: algoSelectionList->SortItems(&nameSortCallBack, sortDirection);
-            break;
-    case 2: algoSelectionList->SortItems(&descSortCallBack, sortDirection);
+    case 1: algoSelectionList->SortItems(&descSortCallBack, sortDirection);
             break;
 
     default: break;
@@ -270,11 +263,6 @@ int MyFrame::compareInts(int id1, int id2, int direction) {
 
 int MyFrame::compareStrings(const std::string& s1, const std::string& s2, int direction) {
   return s1.compare(s2) * direction;
-}
-
-int MyFrame::idSortCallBack(wxIntPtr item1, wxIntPtr item2, wxIntPtr direction) {
-  return compareInts(reinterpret_cast<ItemData*>(item1)->id, reinterpret_cast<ItemData*>(item2)->id,
-              static_cast<int>(direction));
 }
 
 int MyFrame::nameSortCallBack(wxIntPtr item1, wxIntPtr item2, wxIntPtr direction) {
@@ -459,4 +447,12 @@ std::vector<wxString> MyFrame::getGOBenchResults(const wxString& method) {
 
 void MyFrame::OnCollapsiblePaneChange(wxCollapsiblePaneEvent& event) {
   left->Layout();
+}
+
+void MyFrame::populateAlgoList() {
+  std::ifstream filein("algorithms.txt");
+  for (std::string line; std::getline(filein, line);) {
+    size_t pos = line.find(":");
+    addListItem(line.substr(0, pos), line.substr(pos + 1));
+  }
 }

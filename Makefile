@@ -16,7 +16,7 @@ $(GUIDIR)/wxGoBenchOptions.o : $(GUIDIR)/wxGoBenchOptions.cpp $(GUIDIR)/wxGoBenc
 $(GUIDIR)/wxHorizontalBarChart.o : $(GUIDIR)/wxHorizontalBarChart.cpp $(GUIDIR)/wxHorizontalBarChart.hpp
 	$(CXX) -o $@ $(CXXFLAGS) `wx-config --cxxflags` $<
 
-$(GUIDIR)/benchmarkGUI.o : $(GUIDIR)/benchmarkGUI.cpp $(GUIDIR)/benchmarkGUI.hpp $(GUIDIR)/wxHorizontalBarChart.hpp $(GUIDIR)/wxGoBenchOptions.hpp
+$(GUIDIR)/benchmarkGUI.o : $(GUIDIR)/benchmarkGUI.cpp $(GUIDIR)/benchmarkGUI.hpp $(GUIDIR)/wxHorizontalBarChart.hpp $(GUIDIR)/wxGoBenchOptions.hpp algorithms.txt
 	$(CXX) -o $@ $(CXXFLAGS) `wx-config --cxxflags` $<
 
 .PHONY = clean

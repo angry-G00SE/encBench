@@ -48,13 +48,14 @@ private:
 
   language currentLanguge;
 
-  void addListItem(int, const std::string&, const std::string&);
+  void addListItem(const std::string& method, const std::string& description);
   void runBenchmark(wxCommandEvent&);
 
   void addAlgorithmBenchResult( const wxString&, const wxString&, const wxString&, const wxString&,
                                 const wxString&);
   void addAlgorithmBenchResult(const std::vector<wxString>&);
 
+  void populateAlgoList();
 
   void removeDuplicate(long);
   void removeDuplicate(wxString);
@@ -63,18 +64,17 @@ private:
 
   // functions to generate commands for supported languages
   std::string getGOCommand(const wxString& method);
-  //wxString getCPPCommand(const wxString&);
-  //wxString getCSCommmand(const wxString&);
-  //wxString getPythonCommand(const wxString&);
+  //std::string getCPPCommand(const wxString&);
+  //std::string getCSCommmand(const wxString&);
+  //std::string getPythonCommand(const wxString&);
 
   std::vector<wxString> getGOBenchResults(const wxString& method);
-  //std::vector<wxString> getCPPBenchResults(const wxString&, const wxString&);
-  //std::vector<wxString> getCSBenchResults(const wxString&, const wxString&);
-  //std::vector<wxString> getPythonBenchmarkResults(const wxString&, const wxString&);
+  //std::vector<wxString> getCPPBenchResults(const wxString& method);
+  //std::vector<wxString> getCSBenchResults(const wxString& method);
+  //std::vector<wxString> getPythonBenchmarkResults(const wxString& method);
 
   struct ItemData
   {
-    int id;
     std::string name;
     std::string description;
   };
@@ -87,7 +87,6 @@ private:
   static int compareInts(int, int, int);
   static int compareStrings(const std::string&, const std::string&, int);
 
-  static int idSortCallBack(wxIntPtr item1, wxIntPtr item2, wxIntPtr direction);
   static int nameSortCallBack(wxIntPtr item1, wxIntPtr item2, wxIntPtr direction);
   static int descSortCallBack(wxIntPtr item1, wxIntPtr item2, wxIntPtr directinon);
 

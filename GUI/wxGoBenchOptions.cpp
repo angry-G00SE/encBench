@@ -20,10 +20,10 @@ wxGoBenchOptions::wxGoBenchOptions(wxWindow* parent) :
     inputIterChoice = new wxChoice(this, wxID_ANY);
     inputIterChoice->Append(wxString("10"));
     inputIterChoice->Append(wxString("100"));
-    inputIterChoice->Append(wxString("1,000"));
-    inputIterChoice->Append(wxString("10,000"));
-    inputIterChoice->Append(wxString("100,000"));
-    inputIterChoice->Append(wxString("1,000,000"));
+    inputIterChoice->Append(wxString("1000"));
+    inputIterChoice->Append(wxString("10000"));
+    inputIterChoice->Append(wxString("100000"));
+    inputIterChoice->Append(wxString("1000000"));
     inputIterChoice->Disable();
 
 
