@@ -4,19 +4,22 @@ CXX = g++
 # Compiler Flags
 CXXFLAGS = -c
 
-benchmark : benchmarkGUI.o wxHorizontalBarChart.o wxGoBenchOptions.o
+# folder containing GUI files
+GUIDIR = GUI
+
+benchmark : $(GUIDIR)/benchmarkGUI.o $(GUIDIR)/wxHorizontalBarChart.o $(GUIDIR)/wxGoBenchOptions.o
 	$(CXX) -o $@ $^ `wx-config --libs`
 
-wxGoBenchOptions.o : wxGoBenchOptions.cpp wxGoBenchOptions.hpp
-	$(CXX) $(CXXFLAGS) `wx-config --cxxflags` $<
+$(GUIDIR)/wxGoBenchOptions.o : $(GUIDIR)/wxGoBenchOptions.cpp $(GUIDIR)/wxGoBenchOptions.hpp
+	$(CXX) -o $@ $(CXXFLAGS) `wx-config --cxxflags` $<
 
-wxHorizontalBarChart.o : wxHorizontalBarChart.cpp wxHorizontalBarChart.hpp
-	$(CXX) $(CXXFLAGS) `wx-config --cxxflags` $<
+$(GUIDIR)/wxHorizontalBarChart.o : $(GUIDIR)/wxHorizontalBarChart.cpp $(GUIDIR)/wxHorizontalBarChart.hpp
+	$(CXX) -o $@ $(CXXFLAGS) `wx-config --cxxflags` $<
 
-benchmarkGUI.o : benchmarkGUI.cpp benchmarkGUI.hpp wxHorizontalBarChart.hpp wxGoBenchOptions.hpp
-	$(CXX) $(CXXFLAGS) `wx-config --cxxflags` $<
+$(GUIDIR)/benchmarkGUI.o : $(GUIDIR)/benchmarkGUI.cpp $(GUIDIR)/benchmarkGUI.hpp $(GUIDIR)/wxHorizontalBarChart.hpp $(GUIDIR)/wxGoBenchOptions.hpp
+	$(CXX) -o $@ $(CXXFLAGS) `wx-config --cxxflags` $<
 
 .PHONY = clean
 
 clean :
-	rm -f benchmark *.o
+	rm -f benchmark $(GUIDIR)/*.o

@@ -388,7 +388,7 @@ void MyFrame::OnDraw(wxCommandEvent& evt) {
 std::string MyFrame::getGOCommand(const wxString& method) {
 
   wxString cmd;
-  cmd << "go run ../benchmarks/bench.go -algorithm=" << method << " ";
+  cmd << "go run benchmarks/bench.go -algorithm=" << method << " ";
 
   // if user chose nbr-of-iteration or time as input, if data is entered, use it. Else use default option.
   switch(go_options_win->GetInputChoiceRadio()->GetSelection()) {
