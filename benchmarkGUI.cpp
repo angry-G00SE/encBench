@@ -13,16 +13,15 @@
   #include <wx/wx.h>
 #endif
 
-#include "wxGoBenchOptions.hpp"
-#include "benchmarkGUI.hpp"
-#include "wxHorizontalBarChart.hpp"
-
-
 #if defined(_WIN32)
 #elif defined(__linux__)
   #include "pstream.h"
 #elif defined(__APPLE__) && defined(__MACH__)
 #endif
+
+#include "wxGoBenchOptions.hpp"
+#include "benchmarkGUI.hpp"
+#include "wxHorizontalBarChart.hpp"
 
 
 wxIMPLEMENT_APP(MyApp);
@@ -119,9 +118,9 @@ MyFrame::MyFrame(const wxString& name, const wxPoint& pos, const wxSize& size)
     this->sortByColumn(evt.GetColumn());
   });
 
-  addListItem(123, "some item", "description here!");
-  addListItem(456, "name here", "2nd item!");
-  addListItem(789, "name here again", "3rd item!");
+  addListItem(123, "MD5", "description here!");
+  addListItem(456, "SHA1", "2nd item!");
+  addListItem(789, "SHA224", "3rd item!");
 
   //////////////////////////////////////////////////////////////////////////////////////////////////////
   // Initializing Selected Algorithm Info list
@@ -345,22 +344,19 @@ void MyFrame::runBenchmark(wxCommandEvent& evt) {
     wxString itemName = algoSelectionList->GetItemText(index, 1);
     removeDuplicate(itemName);
 
-    // reading data here
-    std::string cmdStr;               // a string to store the command
+    std::vector<wxString> results = getGOBenchResults(itemName);
 
-    // setting-up the command according to the chosen options
-    //std::vector<std::string> v = getBenchResults(itemName);
-    //addAlgorithmBenchResult(v);
-    addAlgorithmBenchResult(algoSelectionList->GetItemText(index, 1),
-                            "-", "-", "-", "-");
+    addAlgorithmBenchResult(itemName, results[2], results[3], results[0], results[1]);
 
     index = algoSelectionList->GetNextSelected(index);
     while (index != -1) {
 
       itemName = algoSelectionList->GetItemText(index, 1);
       removeDuplicate(itemName);
-      addAlgorithmBenchResult(algoSelectionList->GetItemText(index, 1),
-                              "-", "-", "-", "-");
+
+      results = getGOBenchResults(itemName);
+
+      addAlgorithmBenchResult(itemName, results[2], results[3], results[0], results[1]);
       index = algoSelectionList->GetNextSelected(index);
     }
   }
@@ -381,28 +377,6 @@ void MyFrame::OnDraw(wxCommandEvent& evt) {
 
 }
 
-// according to the default/selected options this function will populate a std::vector
-// with benchmark results of method
-// method : corresponding method's name
-std::vector<wxString> MyFrame::getBenchResults(const wxString& method) {
-
-  // setting-up the command and parsing benchmark results
-  switch(currentLanguge) {
-
-    case GO : return getGOBenchResults(method, getGOCommand(method));
-
-    // these are not yet implemented
-    //case CPP : return getCPPBenchResults(method, getCPPCommand(method));
-
-    //case CS : return getCSBenchResults(method, getCSCommmand(method));
-
-    //case PYTHON : return getPythonBenchmarkResults(method, getPythonCommand(method));
-
-    default : return std::vector<wxString>();
-
-  }
-}
-
 
 ///////////////////////////////////////////////////////////////////////////////////////
 // this function generates a GOLANG command to benchmark method with provided option(s)
@@ -411,23 +385,28 @@ std::vector<wxString> MyFrame::getBenchResults(const wxString& method) {
 //
 // returns a wxString (std::string )
 ///////////////////////////////////////////////////////////////////////////////////////
-wxString MyFrame::getGOCommand(const wxString& method) {
+std::string MyFrame::getGOCommand(const wxString& method) {
 
-  wxString cmd;             // string that will hold the generated GOLANG command
-  cmd << "go ";
-  wxString inputSz;       // user's chosen number of bytes if any
+  wxString cmd;
+  cmd << "go run ../benchmarks/bench.go -algorithm=" << method << " ";
 
   // if user chose nbr-of-iteration or time as input, if data is entered, use it. Else use default option.
   switch(go_options_win->GetInputChoiceRadio()->GetSelection()) {
 
     // iterations selected.
     case 1: // append cmd with: go_options_win->inputIterChoice->GetStringSelection();
+            {
+            cmd << "-iterations=" << go_options_win->inputIterChoice->GetStringSelection() << " ";
             break;
+            }
 
     // time selected
-    case 2: if (!go_options_win->GetInputTime()->IsEmpty())
+    case 2: {
+            if (!go_options_win->GetInputTime()->IsEmpty())
               // append cmd with: go_options_win->inputTime->GetValue();
+              cmd << "-time=" << go_options_win->inputTime->GetValue() << " ";
             break;
+            }
 
     // else use default options
     default: break;
@@ -435,12 +414,13 @@ wxString MyFrame::getGOCommand(const wxString& method) {
 
   // if user selected something use the selected option, else use default option
   if( go_options_win->GetInputSize()->GetSelection() != 0) {
-    inputSz = go_options_win->GetInputSize()->GetStringSelection();
+    cmd << "-size=" << go_options_win->GetInputSize()->GetStringSelection() << " ";
   }
 
   // if user provided the number of threads use the provided number, else use default option
   if (!go_options_win->GetInputThreads()->IsEmpty()) {
     // append cmd with: go_options_win->inputThreads->GetValue();
+    cmd << "-threads=" << go_options_win->inputThreads->GetValue();
   }
 
   // if user provided the number of times to run the benchmark use the provided number, else use default option
@@ -448,21 +428,33 @@ wxString MyFrame::getGOCommand(const wxString& method) {
     // append cmd with: go_options_win->inputBrench->GetValue();
   }
 
-  // lastly, generate GOLANG command here
-  cmd << "put options here and bla bla bla";
-
-  return cmd;
+  return cmd.ToStdString();
 }
 
-std::vector<wxString> MyFrame::getGOBenchResults(const wxString& method, const wxString& cmd) {
-  std::vector<wxString> v;
-  // verifying platform and acting accordingly
+std::vector<wxString> MyFrame::getGOBenchResults(const wxString& method) {
+
+  std::vector<wxString> results;
+
+  // verifying platform and populating an std::vector with benchmark results
   #if defined(_WIN32)
   #elif defined(__linux__)
-    redi::ipstream process(cmd.ToStdString(), redi::pstreams::pstdout);
+    redi::ipstream in(getGOCommand(method), redi::pstreams::pstdout);
+    std::string outputLine;
+
+    int i = 1;
+    while(std::getline(in, outputLine)) {
+      // just to skip first 4 lines
+      if (i>4)  {
+        results.push_back(wxString(outputLine));
+        std::cout << outputLine << std::endl;
+      }
+      else
+        ++i;
+    }
   #elif defined(__APPLE__) && defined(__MACH__)
   #endif
-  return v;
+
+  return results;
 }
 
 void MyFrame::OnCollapsiblePaneChange(wxCollapsiblePaneEvent& event) {

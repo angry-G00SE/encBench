@@ -51,8 +51,6 @@ private:
   void addListItem(int, const std::string&, const std::string&);
   void runBenchmark(wxCommandEvent&);
 
-  std::vector<wxString> getBenchResults(const wxString&);
-
   void addAlgorithmBenchResult( const wxString&, const wxString&, const wxString&, const wxString&,
                                 const wxString&);
   void addAlgorithmBenchResult(const std::vector<wxString>&);
@@ -64,12 +62,12 @@ private:
   void OnDraw(wxCommandEvent&);
 
   // functions to generate commands for supported languages
-  wxString getGOCommand(const wxString&);
+  std::string getGOCommand(const wxString& method);
   //wxString getCPPCommand(const wxString&);
   //wxString getCSCommmand(const wxString&);
   //wxString getPythonCommand(const wxString&);
 
-  std::vector<wxString> getGOBenchResults(const wxString&, const wxString&);
+  std::vector<wxString> getGOBenchResults(const wxString& method);
   //std::vector<wxString> getCPPBenchResults(const wxString&, const wxString&);
   //std::vector<wxString> getCSBenchResults(const wxString&, const wxString&);
   //std::vector<wxString> getPythonBenchmarkResults(const wxString&, const wxString&);

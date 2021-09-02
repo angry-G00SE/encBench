@@ -33,12 +33,12 @@ wxGoBenchOptions::wxGoBenchOptions(wxWindow* parent) :
 
     wxStaticText* sizeText = new wxStaticText(this, wxID_ANY, wxString("Size"));
     inputSize = new wxChoice(this, wxID_ANY);
-    inputSize->Append(wxString("128 bytes"));
-    inputSize->Append(wxString("1 Mb"));
-    inputSize->Append(wxString("5 Mb"));
-    inputSize->Append(wxString("50 Mb"));
-    inputSize->Append(wxString("100 Mb"));
-    inputSize->Append(wxString("200 Mb"));
+    inputSize->Append(wxString("10"));
+    inputSize->Append(wxString("100"));
+    inputSize->Append(wxString("1000"));
+    inputSize->Append(wxString("10000"));
+    inputSize->Append(wxString("100000"));
+    inputSize->Append(wxString("1000000"));
 
     wxStaticText* threadText = new wxStaticText(this, wxID_ANY, wxString("Nbr Threads"));
     inputThreads = new wxTextCtrl(this, ID_INPUT_THREADS);
