@@ -1,0 +1,3 @@
+GUI/*.o
+benchmark
+GUI/pstream.h

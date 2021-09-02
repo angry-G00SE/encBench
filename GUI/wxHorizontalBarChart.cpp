@@ -39,7 +39,7 @@ void wxHorizontalBarChart::paintNow() {
 
 
 
-// where magic id done!
+// where magic is done!
 void wxHorizontalBarChart::render(wxDC& dc) {
 
   // setting-up drawing tools
@@ -190,4 +190,9 @@ void wxHorizontalBarChart::SetYAxisLabel(const wxString& text) {
 
 void wxHorizontalBarChart::SetTitle(const wxString& text) {
   title = text;
+}
+
+void wxHorizontalBarChart::ClearChart() {
+  chartsVect.clear();
+  maxValue = 0.0;
 }

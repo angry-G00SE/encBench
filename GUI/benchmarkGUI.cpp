@@ -21,8 +21,9 @@
 #endif
 
 #include "wxGoBenchOptions.hpp"
-#include "benchmarkGUI.hpp"
 #include "wxHorizontalBarChart.hpp"
+#include "benchmarkGUI.hpp"
+
 
 
 wxIMPLEMENT_APP(MyApp);
@@ -169,30 +170,13 @@ MyFrame::MyFrame(const wxString& name, const wxPoint& pos, const wxSize& size)
   go_options_win = new wxGoBenchOptions(options_pane_win);
 
   //////////////////////////////////////////////////////////////////////////////////////////////////////
-  // testing chart library
+  // Setting-up Chart
   //////////////////////////////////////////////////////////////////////////////////////////////////////
-  wxHorizontalBarChart* chart_test = new wxHorizontalBarChart(upper_mid);
+  chart_graph = new wxHorizontalBarChart(upper_mid);
 
-  wxString s1 = "Yo Mama!";
-  wxString s2 = "HEEEEEEY";
-  wxString s3 = "Holyyyy!";
-  wxString s4 = "hihihihi!";
-
-  chart_test->AddChart(s1, 35.8);
-  chart_test->AddChart(s2, 120.8);
-  chart_test->AddChart(s3, 180.4);
-  chart_test->AddChart(s3, 100);
-  chart_test->AddChart(s4, 200);
-  chart_test->AddChart(s1, 10);
-  chart_test->AddChart(s2, 400);
-  chart_test->AddChart(wxT("some method"), 300);
-  chart_test->AddChart(wxT("another method"), 240);
-
-  chart_test->UpdateMax();
-
-  chart_test->SetXAxisLabel(wxT("Time (ms)"));
-  chart_test->SetYAxisLabel(wxT("Method Name"));
-  chart_test->SetTitle(wxT("Time Mean"));
+  chart_graph->SetXAxisLabel(wxT("Time (ms)"));
+  chart_graph->SetYAxisLabel(wxT("Method Name"));
+  chart_graph->SetTitle(wxT("Time Mean"));
 
   //////////////////////////////////////////////////////////////////////////////////////////////////////
   // Setting-up  Sizers
@@ -203,9 +187,9 @@ MyFrame::MyFrame(const wxString& name, const wxPoint& pos, const wxSize& size)
   paneSz->SetSizeHints(options_pane_win);
 
 
-  wxBoxSizer* chart_sizer = new wxBoxSizer(wxVERTICAL);
-  chart_sizer->Add(chart_test, 1, wxEXPAND);
-  upper_mid->SetSizerAndFit(chart_sizer);
+  wxBoxSizer* chartsz = new wxBoxSizer(wxVERTICAL);
+  chartsz->Add(chart_graph, 1, wxEXPAND);
+  upper_mid->SetSizerAndFit(chartsz);
 
   wxBoxSizer* main_sizer = new wxBoxSizer(wxVERTICAL);
   main_sizer->Add(searchBox, 0, wxEXPAND | wxTOP | wxLEFT | wxRIGHT, 5);
@@ -329,7 +313,7 @@ void MyFrame::runBenchmark(wxCommandEvent& evt) {
   // check whether there is at least one element selected
   if (index != -1) {
 
-    wxString itemName = algoSelectionList->GetItemText(index, 1);
+    wxString itemName = algoSelectionList->GetItemText(index, 0);
     removeDuplicate(itemName);
 
     std::vector<wxString> results = getGOBenchResults(itemName);
@@ -339,7 +323,7 @@ void MyFrame::runBenchmark(wxCommandEvent& evt) {
     index = algoSelectionList->GetNextSelected(index);
     while (index != -1) {
 
-      itemName = algoSelectionList->GetItemText(index, 1);
+      itemName = algoSelectionList->GetItemText(index, 0);
       removeDuplicate(itemName);
 
       results = getGOBenchResults(itemName);
@@ -363,6 +347,19 @@ void MyFrame::OnSearch(wxCommandEvent& evt) {
 
 void MyFrame::OnDraw(wxCommandEvent& evt) {
 
+  // remove all previous data elements from chart
+  chart_graph->ClearChart();
+
+  long index = algoInfoList->GetFirstSelected();
+  while (index != -1) {
+    double median;
+    algoInfoList->GetItemText(index, 1).ToDouble(&median);
+    chart_graph->AddChart(algoInfoList->GetItemText(index, 0), median);
+    index = algoInfoList->GetNextSelected(index);
+  }
+
+  chart_graph->UpdateMax();
+  chart_graph->paintNow();
 }
 
 
@@ -434,7 +431,6 @@ std::vector<wxString> MyFrame::getGOBenchResults(const wxString& method) {
       // just to skip first 4 lines
       if (i>4)  {
         results.push_back(wxString(outputLine));
-        std::cout << outputLine << std::endl;
       }
       else
         ++i;

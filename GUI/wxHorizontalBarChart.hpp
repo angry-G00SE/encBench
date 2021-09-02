@@ -40,6 +40,9 @@ public:
   // paint event handler
   void OnPaint(wxPaintEvent& evt);
 
+
+  void ClearChart();
+
   // probably some usefull events
   void OnMouseMoved(wxMouseEvent& event);
   void OnMouseDown(wxMouseEvent& event);

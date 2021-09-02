@@ -45,6 +45,7 @@ private:
   wxListView* algoInfoList;
   wxPanel* left;
   wxGoBenchOptions* go_options_win;
+  wxHorizontalBarChart* chart_graph;
 
   language currentLanguge;
 
