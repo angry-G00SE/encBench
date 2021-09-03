@@ -46,6 +46,7 @@ private:
   wxPanel* left;
   wxGoBenchOptions* go_options_win;
   wxHorizontalBarChart* chart_graph;
+  wxChoice* dataType;
 
   language currentLanguge;
 
@@ -62,6 +63,7 @@ private:
   void removeDuplicate(wxString);
   void OnSearch(wxCommandEvent&);
   void OnDraw(wxCommandEvent&);
+  void OnUnselect(wxCommandEvent&);
 
   // functions to generate commands for supported languages
   std::string getGOCommand(const wxString& method);

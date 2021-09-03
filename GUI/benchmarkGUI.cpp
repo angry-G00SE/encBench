@@ -33,6 +33,7 @@ wxBEGIN_EVENT_TABLE(MyFrame, wxFrame)
   EVT_MENU(wxID_ABOUT, MyFrame::OnAbout)
   EVT_BUTTON(ID_RUN_BENCHMARK, MyFrame::runBenchmark)
   EVT_BUTTON(ID_DRAW_GRAPH, MyFrame::OnDraw)
+  EVT_BUTTON(ID_UNSELECT_ALL, MyFrame::OnUnselect)
   EVT_SEARCHCTRL_SEARCH_BTN(ID_SEARCH_BOX, MyFrame::OnSearch)
   EVT_COLLAPSIBLEPANE_CHANGED(ID_COLLAPSIBLE_PANE, MyFrame::OnCollapsiblePaneChange)
 wxEND_EVENT_TABLE()
@@ -146,7 +147,7 @@ MyFrame::MyFrame(const wxString& name, const wxPoint& pos, const wxSize& size)
   //////////////////////////////////////////////////////////////////////////////////////////////////////
   // Setting-up Choice Boxes
   //////////////////////////////////////////////////////////////////////////////////////////////////////
-  wxChoice* dataType = new wxChoice(bottom_right, ID_DATA_CHOICE);
+  dataType = new wxChoice(bottom_right, ID_DATA_CHOICE);
   dataType->Insert("Median", 0);
   dataType->Insert("Nbr Alloc", 1);
   dataType->Insert("Byte per Alloc", 2);
@@ -154,7 +155,7 @@ MyFrame::MyFrame(const wxString& name, const wxPoint& pos, const wxSize& size)
 
   wxChoice* graphType = new wxChoice(bottom_right, ID_GRAPH_CHOICE);
   graphType->Insert("Barchart", 0);
-  graphType->Insert("Boxplot", 1);
+  //graphType->Insert("Boxplot", 1);
   graphType->SetSelection(0);
 
   //////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -174,9 +175,9 @@ MyFrame::MyFrame(const wxString& name, const wxPoint& pos, const wxSize& size)
   //////////////////////////////////////////////////////////////////////////////////////////////////////
   chart_graph = new wxHorizontalBarChart(upper_mid);
 
-  chart_graph->SetXAxisLabel(wxT("Time (ms)"));
+  //chart_graph->SetXAxisLabel(wxT("Time (ms)"));
   chart_graph->SetYAxisLabel(wxT("Method Name"));
-  chart_graph->SetTitle(wxT("Time Mean"));
+  //chart_graph->SetTitle(wxT("Time Mean"));
 
   //////////////////////////////////////////////////////////////////////////////////////////////////////
   // Setting-up  Sizers
@@ -337,7 +338,7 @@ void MyFrame::runBenchmark(wxCommandEvent& evt) {
 void MyFrame::OnSearch(wxCommandEvent& evt) {
   long currentIndex = algoSelectionList->GetNextItem(-1);
   while (currentIndex != -1) {
-    if (algoSelectionList->GetItemText(currentIndex, 1).IsSameAs(evt.GetString(), false)) {
+    if (algoSelectionList->GetItemText(currentIndex, 0).IsSameAs(evt.GetString(), false)) {
       algoSelectionList->Select(currentIndex);
       break;
     }
@@ -350,12 +351,48 @@ void MyFrame::OnDraw(wxCommandEvent& evt) {
   // remove all previous data elements from chart
   chart_graph->ClearChart();
 
-  long index = algoInfoList->GetFirstSelected();
-  while (index != -1) {
-    double median;
-    algoInfoList->GetItemText(index, 1).ToDouble(&median);
-    chart_graph->AddChart(algoInfoList->GetItemText(index, 0), median);
-    index = algoInfoList->GetNextSelected(index);
+  switch (dataType->GetSelection()) {
+    case 0 :
+            {
+              chart_graph->SetXAxisLabel(wxT("Time (ns)"));
+              chart_graph->SetTitle(wxT("Time Mean"));
+              long index = algoInfoList->GetFirstSelected();
+              while (index != -1) {
+                double median;
+                algoInfoList->GetItemText(index, 1).ToDouble(&median);
+                chart_graph->AddChart(algoInfoList->GetItemText(index, 0), median);
+                index = algoInfoList->GetNextSelected(index);
+              }
+              break;
+            }
+    case 1 :
+            {
+              chart_graph->SetXAxisLabel(wxT("Nbr Alloc"));
+              chart_graph->SetTitle(wxT("Number of Allocations"));
+              long index = algoInfoList->GetFirstSelected();
+              while (index != -1) {
+                long nbr_alloc;
+                algoInfoList->GetItemText(index, 3).ToLong(&nbr_alloc);
+                chart_graph->AddChart(algoInfoList->GetItemText(index, 0), nbr_alloc);
+                index = algoInfoList->GetNextSelected(index);
+              }
+              break;
+            }
+    case 2 :
+            {
+              chart_graph->SetXAxisLabel(wxT("B/Alloc"));
+              chart_graph->SetTitle(wxT("Bytes per Allocation"));
+              long index = algoInfoList->GetFirstSelected();
+              while (index != -1) {
+                long bytes_per_alloc;
+                algoInfoList->GetItemText(index, 4).ToLong(&bytes_per_alloc);
+                chart_graph->AddChart(algoInfoList->GetItemText(index, 0), bytes_per_alloc);
+                index = algoInfoList->GetNextSelected(index);
+              }
+              break;
+            }
+
+    default : break;
   }
 
   chart_graph->UpdateMax();
@@ -450,5 +487,15 @@ void MyFrame::populateAlgoList() {
   for (std::string line; std::getline(filein, line);) {
     size_t pos = line.find(":");
     addListItem(line.substr(0, pos), line.substr(pos + 1));
+  }
+}
+
+void MyFrame::OnUnselect(wxCommandEvent& e) {
+  long index = algoInfoList->GetFirstSelected();
+  while (index != -1) {
+    if (algoInfoList->IsSelected(index)) {
+      algoInfoList->Select(index, false);
+    }
+    index = algoInfoList->GetNextSelected(index);
   }
 }
