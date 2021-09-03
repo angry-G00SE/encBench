@@ -12,7 +12,8 @@ enum {
   ID_DEFAULT_CB = 7,
   ID_TIME_CB = 8,
   ID_ITERATION_CB = 9,
-  ID_COLLAPSIBLE_PANE = 10
+  ID_COLLAPSIBLE_PANE = 10,
+  ID_UNSELECT_ALL_2 = 11
 };
 
 enum input {
@@ -64,6 +65,7 @@ private:
   void OnSearch(wxCommandEvent&);
   void OnDraw(wxCommandEvent&);
   void OnUnselect(wxCommandEvent&);
+  void OnUnselect2(wxCommandEvent&);
 
   // functions to generate commands for supported languages
   std::string getGOCommand(const wxString& method);

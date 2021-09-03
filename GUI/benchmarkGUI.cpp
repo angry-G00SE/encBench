@@ -34,6 +34,7 @@ wxBEGIN_EVENT_TABLE(MyFrame, wxFrame)
   EVT_BUTTON(ID_RUN_BENCHMARK, MyFrame::runBenchmark)
   EVT_BUTTON(ID_DRAW_GRAPH, MyFrame::OnDraw)
   EVT_BUTTON(ID_UNSELECT_ALL, MyFrame::OnUnselect)
+  EVT_BUTTON(ID_UNSELECT_ALL_2, MyFrame::OnUnselect2)
   EVT_SEARCHCTRL_SEARCH_BTN(ID_SEARCH_BOX, MyFrame::OnSearch)
   EVT_COLLAPSIBLEPANE_CHANGED(ID_COLLAPSIBLE_PANE, MyFrame::OnCollapsiblePaneChange)
 wxEND_EVENT_TABLE()
@@ -143,6 +144,7 @@ MyFrame::MyFrame(const wxString& name, const wxPoint& pos, const wxSize& size)
   wxButton* runBench = new wxButton(left, ID_RUN_BENCHMARK, "Run Benchmark");
   wxButton* drawGraphs = new wxButton(bottom_right, ID_DRAW_GRAPH, "Draw");
   wxButton* unselectAll = new wxButton(bottom_right, ID_UNSELECT_ALL, "Unselect All");
+  wxButton* unselectAll_2 = new wxButton(left, ID_UNSELECT_ALL_2, "Unselect All");
 
   //////////////////////////////////////////////////////////////////////////////////////////////////////
   // Setting-up Choice Boxes
@@ -182,6 +184,11 @@ MyFrame::MyFrame(const wxString& name, const wxPoint& pos, const wxSize& size)
   //////////////////////////////////////////////////////////////////////////////////////////////////////
   // Setting-up  Sizers
   //////////////////////////////////////////////////////////////////////////////////////////////////////
+  wxBoxSizer* bottom_left = new wxBoxSizer(wxHORIZONTAL);
+  bottom_left->Add(unselectAll_2, 0, wxEXPAND | wxRIGHT, 5);
+  bottom_left->Add(runBench, 1, wxEXPAND);
+
+
   wxBoxSizer* paneSz = new wxBoxSizer(wxVERTICAL);
   paneSz->Add(go_options_win, 1, wxEXPAND);
   options_pane_win->SetSizer(paneSz);
@@ -196,7 +203,7 @@ MyFrame::MyFrame(const wxString& name, const wxPoint& pos, const wxSize& size)
   main_sizer->Add(searchBox, 0, wxEXPAND | wxTOP | wxLEFT | wxRIGHT, 5);
   main_sizer->Add(algoSelectionList, 1, wxEXPAND | wxALL, 5);
   main_sizer->Add(options_pane, 0, wxEXPAND | wxBOTTOM, 5);
-  main_sizer->Add(runBench, 0, wxALIGN_RIGHT | wxRIGHT | wxBOTTOM, 5);
+  main_sizer->Add(bottom_left, 0, wxEXPAND | wxLEFT | wxRIGHT | wxBOTTOM, 5);
   left->SetSizerAndFit(main_sizer);
 
   wxBoxSizer* nd_bottom_right_sizer = new wxBoxSizer(wxHORIZONTAL);
@@ -497,5 +504,15 @@ void MyFrame::OnUnselect(wxCommandEvent& e) {
       algoInfoList->Select(index, false);
     }
     index = algoInfoList->GetNextSelected(index);
+  }
+}
+
+void MyFrame::OnUnselect2(wxCommandEvent& e) {
+  long index = algoSelectionList->GetFirstSelected();
+  while (index != -1) {
+    if (algoSelectionList->IsSelected(index)) {
+      algoSelectionList->Select(index, false);
+    }
+    index = algoSelectionList->GetNextSelected(index);
   }
 }
