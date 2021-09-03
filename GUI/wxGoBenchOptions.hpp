@@ -12,29 +12,27 @@ enum {
 
 class wxGoBenchOptions : public wxWindow {
 public:
-  wxRadioBox* GetInputChoiceRadio();
-  wxChoice* GetInputSize();
-  wxChoice* GetInputIter();
-  wxTextCtrl* GetInputTime();
-  wxTextCtrl* GetInputThreads();
-  wxTextCtrl* GetInputBench();
-
-  wxGoBenchOptions(wxWindow* parent);
-
-  wxRadioBox* inputChoiceRadio;
-
+  // these are declared here because these will be called outside wxGoBenchOptions's constructor
   wxChoice* inputIterChoice;
   wxChoice* inputSize;
   wxTextCtrl* inputTime;
   wxTextCtrl* inputThreads;
   wxTextCtrl* inputBench;
+  wxRadioBox* inputChoiceRadio;
 
-  DECLARE_EVENT_TABLE()
+  // constructor
+  wxGoBenchOptions(wxWindow* parent);
+
 private:
+  // these are declared here because these will be called outside wxGoBenchOptions's constructor
   wxCheckBox* memProfile;
   wxCheckBox* cpuProfile;
 
+  // events
   void OnRadio(wxCommandEvent& event);
+
+
+  wxDECLARE_EVENT_TABLE();
 };
 
 #endif

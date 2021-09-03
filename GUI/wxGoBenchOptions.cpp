@@ -101,27 +101,3 @@ void wxGoBenchOptions::OnRadio(wxCommandEvent& event) {
     default: break;
   }
 }
-
-wxRadioBox* wxGoBenchOptions::GetInputChoiceRadio() {
-  return inputChoiceRadio;
-}
-
-wxTextCtrl* wxGoBenchOptions::GetInputTime() {
-  return inputTime;
-}
-
-wxChoice* wxGoBenchOptions::GetInputSize() {
-  return inputSize;
-}
-
-wxChoice* wxGoBenchOptions::GetInputIter() {
-  return inputIterChoice;
-}
-
-wxTextCtrl* wxGoBenchOptions::GetInputThreads() {
-  return inputThreads;
-}
-
-wxTextCtrl* wxGoBenchOptions::GetInputBench() {
-  return inputBench;
-}

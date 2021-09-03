@@ -35,6 +35,8 @@ wxBEGIN_EVENT_TABLE(MyFrame, wxFrame)
   EVT_BUTTON(ID_DRAW_GRAPH, MyFrame::OnDraw)
   EVT_BUTTON(ID_UNSELECT_ALL, MyFrame::OnUnselect)
   EVT_BUTTON(ID_UNSELECT_ALL_2, MyFrame::OnUnselect2)
+  EVT_BUTTON(ID_REMOVE_SELECTED, MyFrame::OnRemoveSelected)
+  EVT_BUTTON(ID_CLEAR, MyFrame::OnClear)
   EVT_SEARCHCTRL_SEARCH_BTN(ID_SEARCH_BOX, MyFrame::OnSearch)
   EVT_COLLAPSIBLEPANE_CHANGED(ID_COLLAPSIBLE_PANE, MyFrame::OnCollapsiblePaneChange)
 wxEND_EVENT_TABLE()
@@ -145,6 +147,8 @@ MyFrame::MyFrame(const wxString& name, const wxPoint& pos, const wxSize& size)
   wxButton* drawGraphs = new wxButton(bottom_right, ID_DRAW_GRAPH, "Draw");
   wxButton* unselectAll = new wxButton(bottom_right, ID_UNSELECT_ALL, "Unselect All");
   wxButton* unselectAll_2 = new wxButton(left, ID_UNSELECT_ALL_2, "Unselect All");
+  wxButton* removeSelected = new wxButton(bottom_right, ID_REMOVE_SELECTED, "rm Selected");
+  wxButton* clearList = new wxButton(bottom_right, ID_CLEAR, "Clear All");
 
   //////////////////////////////////////////////////////////////////////////////////////////////////////
   // Setting-up Choice Boxes
@@ -152,7 +156,7 @@ MyFrame::MyFrame(const wxString& name, const wxPoint& pos, const wxSize& size)
   dataType = new wxChoice(bottom_right, ID_DATA_CHOICE);
   dataType->Insert("Median", 0);
   dataType->Insert("Nbr Alloc", 1);
-  dataType->Insert("Byte per Alloc", 2);
+  dataType->Insert("Byte/Alloc", 2);
   dataType->SetSelection(0);
 
   wxChoice* graphType = new wxChoice(bottom_right, ID_GRAPH_CHOICE);
@@ -184,6 +188,14 @@ MyFrame::MyFrame(const wxString& name, const wxPoint& pos, const wxSize& size)
   //////////////////////////////////////////////////////////////////////////////////////////////////////
   // Setting-up  Sizers
   //////////////////////////////////////////////////////////////////////////////////////////////////////
+  wxBoxSizer* choiceSZ = new wxBoxSizer(wxHORIZONTAL);
+  choiceSZ->Add(dataType, 0, wxRIGHT, 5);
+  choiceSZ->Add(graphType, 0);
+
+  wxBoxSizer* selectionSZ = new wxBoxSizer(wxHORIZONTAL);
+  selectionSZ->Add(removeSelected, 1, wxRIGHT, 5);
+  selectionSZ->Add(clearList, 0);
+
   wxBoxSizer* bottom_left = new wxBoxSizer(wxHORIZONTAL);
   bottom_left->Add(unselectAll_2, 0, wxEXPAND | wxRIGHT, 5);
   bottom_left->Add(runBench, 1, wxEXPAND);
@@ -210,9 +222,9 @@ MyFrame::MyFrame(const wxString& name, const wxPoint& pos, const wxSize& size)
   nd_bottom_right_sizer->Add(drawGraphs, 1, wxALIGN_BOTTOM | wxBOTTOM | wxRIGHT, 5);
 
   wxBoxSizer* nd_right_sizer = new wxBoxSizer(wxVERTICAL);
-  nd_right_sizer->Add(dataType, 0, wxEXPAND | wxRIGHT | wxTOP | wxBOTTOM, 5);
-  nd_right_sizer->Add(graphType, 0, wxEXPAND | wxRIGHT | wxBOTTOM, 5);
+  nd_right_sizer->Add(choiceSZ, 0, wxEXPAND | wxRIGHT | wxTOP | wxBOTTOM, 5);
   nd_right_sizer->Add(unselectAll, 0, wxEXPAND | wxBOTTOM | wxRIGHT, 5);
+  nd_right_sizer->Add(selectionSZ, 0, wxEXPAND | wxBOTTOM | wxRIGHT, 5);
   nd_right_sizer->Add(nd_bottom_right_sizer, 1, wxEXPAND);
   //nd_right_sizer->Add(drawGraphs, 1);
 
@@ -327,6 +339,7 @@ void MyFrame::runBenchmark(wxCommandEvent& evt) {
     std::vector<wxString> results = getGOBenchResults(itemName);
 
     addAlgorithmBenchResult(itemName, results[2], results[3], results[0], results[1]);
+    algoInfoList->Update();
 
     index = algoSelectionList->GetNextSelected(index);
     while (index != -1) {
@@ -337,6 +350,7 @@ void MyFrame::runBenchmark(wxCommandEvent& evt) {
       results = getGOBenchResults(itemName);
 
       addAlgorithmBenchResult(itemName, results[2], results[3], results[0], results[1]);
+      algoInfoList->Update();
       index = algoSelectionList->GetNextSelected(index);
     }
   }
@@ -420,7 +434,7 @@ std::string MyFrame::getGOCommand(const wxString& method) {
   cmd << "go run benchmarks/bench.go -algorithm=" << method << " ";
 
   // if user chose nbr-of-iteration or time as input, if data is entered, use it. Else use default option.
-  switch(go_options_win->GetInputChoiceRadio()->GetSelection()) {
+  switch(go_options_win->inputChoiceRadio->GetSelection()) {
 
     // iterations selected.
     case 1: // append cmd with: go_options_win->inputIterChoice->GetStringSelection();
@@ -431,7 +445,7 @@ std::string MyFrame::getGOCommand(const wxString& method) {
 
     // time selected
     case 2: {
-            if (!go_options_win->GetInputTime()->IsEmpty())
+            if (!go_options_win->inputTime->IsEmpty())
               // append cmd with: go_options_win->inputTime->GetValue();
               cmd << "-time=" << go_options_win->inputTime->GetValue() << " ";
             break;
@@ -442,18 +456,18 @@ std::string MyFrame::getGOCommand(const wxString& method) {
   }
 
   // if user selected something use the selected option, else use default option
-  if( go_options_win->GetInputSize()->GetSelection() != 0) {
-    cmd << "-size=" << go_options_win->GetInputSize()->GetStringSelection() << " ";
+  if( go_options_win->inputSize->GetSelection() != 0) {
+    cmd << "-size=" << go_options_win->inputSize->GetStringSelection() << " ";
   }
 
   // if user provided the number of threads use the provided number, else use default option
-  if (!go_options_win->GetInputThreads()->IsEmpty()) {
+  if (!go_options_win->inputThreads->IsEmpty()) {
     // append cmd with: go_options_win->inputThreads->GetValue();
     cmd << "-threads=" << go_options_win->inputThreads->GetValue();
   }
 
   // if user provided the number of times to run the benchmark use the provided number, else use default option
-  if (!go_options_win->GetInputBench()->IsEmpty()) {
+  if (!go_options_win->inputBench->IsEmpty()) {
     // append cmd with: go_options_win->inputBrench->GetValue();
   }
 
@@ -515,4 +529,16 @@ void MyFrame::OnUnselect2(wxCommandEvent& e) {
     }
     index = algoSelectionList->GetNextSelected(index);
   }
+}
+
+void MyFrame::OnRemoveSelected(wxCommandEvent& e) {
+  long index = algoInfoList->GetFirstSelected();
+  while(index != -1) {
+    algoInfoList->DeleteItem(index);
+    index = algoInfoList->GetNextSelected(index);
+  }
+}
+
+void MyFrame::OnClear(wxCommandEvent& e) {
+  algoInfoList->DeleteAllItems();
 }

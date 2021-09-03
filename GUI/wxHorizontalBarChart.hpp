@@ -9,49 +9,43 @@ struct wxBar {
 class wxHorizontalBarChart : public wxWindow {
 
 private:
-  std::vector<wxBar> chartsVect;    // Vector holding charts
+
+  // container holding charts
+  std::vector<wxBar> chartsVect;
+
 
   wxString title;             // title of the chart
   wxString labelX, labelY;    // Put Unit between parenthesis here
   double maxValue;            // usefull for determining horizontal expansion + x_axis scale
 
-  wxFont chartFont;
-
 public:
+
+  // constructor
   wxHorizontalBarChart(wxWindow* parent);
 
+  // similar to OnPaint, except you can call it whenever you want
   void paintNow();
 
+  // this is where all the drawing is done
   void render(wxDC& dc);
 
   // adds a chart corresponding to method name with a double value
   void AddChart(const wxString&, double);
   void AddChart(const wxBar&);
 
-  // Setting up Axis labels
+  // Setting up Axis labels and title
   void SetXAxisLabel(const wxString&);
   void SetYAxisLabel(const wxString&);
-
   void SetTitle(const wxString&);
-  void SetChartFont();
+
   // update max value
   void UpdateMax();
 
-  // paint event handler
-  void OnPaint(wxPaintEvent& evt);
-
-
+  // removes/clears all benchmark results
   void ClearChart();
 
-  // probably some usefull events
-  void OnMouseMoved(wxMouseEvent& event);
-  void OnMouseDown(wxMouseEvent& event);
-  void OnMouseWheelMoved(wxMouseEvent& event);
-  void OnMouseReleased(wxMouseEvent& event);
-  void OnRightClick(wxMouseEvent& event);
-  void OnMouseLeftWindow(wxMouseEvent& event);
-  void OnKeyPressed(wxKeyEvent& event);
-  void OnKeyReleased(wxKeyEvent& event);
+  // paint event handler
+  void OnPaint(wxPaintEvent& evt);
 
   DECLARE_EVENT_TABLE()
 };
