@@ -57,7 +57,7 @@ private:
 
   // to indicate sort direction for lists
   int sortDirection = 1;
-  unsigned int maxThreads;
+  unsigned int maxThreads;    // = number of cpu cores
 
   // these are declared here because these will be called outside MyFrame constructor
   wxListView* algoSelectionList;
@@ -98,9 +98,9 @@ private:
 
   // functions to generate commands for supported languages
   std::string getGOCommand(const wxString& method);
-  //std::string getCPPCommand(const wxString&);
-  //std::string getCSCommmand(const wxString&);
-  //std::string getPythonCommand(const wxString&);
+  //std::string getCPPCommand(const wxString& method);
+  //std::string getCSCommmand(const wxString& method);
+  //std::string getPythonCommand(const wxString& method);
 
   std::vector<wxString> getGOBenchResults(const wxString& method);
   //std::vector<wxString> getCPPBenchResults(const wxString& method);

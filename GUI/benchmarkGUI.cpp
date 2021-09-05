@@ -130,7 +130,7 @@ MyFrame::MyFrame(const wxString& name, const wxPoint& pos, const wxSize& size)
   //////////////////////////////////////////////////////////////////////////////////////////////////////
   algoInfoList = new wxListView(bottom_right);
   algoInfoList->AppendColumn("Method");
-  algoInfoList->AppendColumn("Median");
+  algoInfoList->AppendColumn("Mean");
   algoInfoList->AppendColumn("Nbr Iteration");
   algoInfoList->AppendColumn("Nbr Alloc");
   algoInfoList->AppendColumn("Byte per Alloc");
@@ -156,7 +156,7 @@ MyFrame::MyFrame(const wxString& name, const wxPoint& pos, const wxSize& size)
   // Setting-up Choice Boxes
   //////////////////////////////////////////////////////////////////////////////////////////////////////
   dataType = new wxChoice(bottom_right, ID_DATA_CHOICE);
-  dataType->Insert("Median", 0);
+  dataType->Insert("Mean", 0);
   dataType->Insert("Nbr Alloc", 1);
   dataType->Insert("Byte/Alloc", 2);
   dataType->SetSelection(0);
@@ -186,7 +186,7 @@ MyFrame::MyFrame(const wxString& name, const wxPoint& pos, const wxSize& size)
 
   populateSystemInfo();
   go_options_win->inputThreads->SetRange(0, maxThreads);
-  
+
   //////////////////////////////////////////////////////////////////////////////////////////////////////
   // Setting-up Chart
   //////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -304,12 +304,12 @@ void MyFrame::OnAbout(wxCommandEvent& evt) {
                 "About Crypto Benchmark", wxOK | wxICON_INFORMATION);
 }
 
-void MyFrame::addAlgorithmBenchResult(const wxString& name, const wxString& median,
+void MyFrame::addAlgorithmBenchResult(const wxString& name, const wxString& Mean,
                                       const wxString& nbrIter, const wxString& nbrAlloc,
                                       const wxString& bytePerAlloc) {
     long index = algoInfoList->GetItemCount();
     algoInfoList->InsertItem(index, name);
-    algoInfoList->SetItem(index, 1, median);
+    algoInfoList->SetItem(index, 1, Mean);
     algoInfoList->SetItem(index, 2, nbrIter);
     algoInfoList->SetItem(index, 3, nbrAlloc);
     algoInfoList->SetItem(index, 4, bytePerAlloc);
@@ -394,9 +394,9 @@ void MyFrame::OnDraw(wxCommandEvent& evt) {
               chart_graph->SetTitle(wxT("Time Mean"));
               long index = algoInfoList->GetFirstSelected();
               while (index != -1) {
-                double median;
-                algoInfoList->GetItemText(index, 1).ToDouble(&median);
-                chart_graph->AddChart(algoInfoList->GetItemText(index, 0), median);
+                double Mean;
+                algoInfoList->GetItemText(index, 1).ToDouble(&Mean);
+                chart_graph->AddChart(algoInfoList->GetItemText(index, 0), Mean);
                 index = algoInfoList->GetNextSelected(index);
               }
               break;
@@ -467,7 +467,12 @@ std::string MyFrame::getGOCommand(const wxString& method) {
             }
 
     // else use default options
-    default: break;
+    default:
+            {
+              cmd << "-iterations=1000" << " ";
+              break;
+            }
+
   }
 
   // if user selected something use the selected option, else use default option
