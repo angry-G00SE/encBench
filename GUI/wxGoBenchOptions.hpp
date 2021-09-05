@@ -16,8 +16,7 @@ public:
   wxChoice* inputIterChoice;
   wxChoice* inputSize;
   wxTextCtrl* inputTime;
-  wxTextCtrl* inputThreads;
-  wxTextCtrl* inputBench;
+  wxSpinCtrl* inputThreads;
   wxRadioBox* inputChoiceRadio;
 
   // constructor

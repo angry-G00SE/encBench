@@ -57,6 +57,7 @@ private:
 
   // to indicate sort direction for lists
   int sortDirection = 1;
+  unsigned int maxThreads;
 
   // these are declared here because these will be called outside MyFrame constructor
   wxListView* algoSelectionList;
@@ -65,6 +66,7 @@ private:
   wxGoBenchOptions* go_options_win;
   wxHorizontalBarChart* chart_graph;
   wxChoice* dataType;
+  wxTextCtrl* sysInfo;
 
   // indicate which language is currently selected
   language currentLanguge;
@@ -76,6 +78,7 @@ private:
   void addAlgorithmBenchResult(const std::vector<wxString>&);
 
   void populateAlgoList();
+  void populateSystemInfo();
 
   void removeDuplicate(long);
   void removeDuplicate(wxString);

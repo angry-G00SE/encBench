@@ -1,16 +1,16 @@
 MD5:Message-Digest Algorithm 5
-SHA1:Message-Digest Algorithm 5
-SHA224:Message-Digest Algorithm 5
-SHA256:Message-Digest Algorithm 5
-SHA384:Message-Digest Algorithm 5
-SHA512:Message-Digest Algorithm 5
-SHA3_224:Message-Digest Algorithm 5
-SHA3_256:Message-Digest Algorithm 5
-SHA3_384:Message-Digest Algorithm 5
-SHA3_512:Message-Digest Algorithm 5
-SHA512_224:Message-Digest Algorithm 5
-SHA512_256:Message-Digest Algorithm 5
+SHA1:Secure Hash Algorithm 1
+SHA224:SHA-2 family (Secure Hash Algorithm 2)
+SHA256:SHA-2 family (Secure Hash Algorithm 2)
+SHA384:SHA-2 family (Secure Hash Algorithm 2)
+SHA512:SHA-2 family (Secure Hash Algorithm 2)
+SHA3_224:latest member of the Secure Hash Algorithm family of standards
+SHA3_256:latest member of the Secure Hash Algorithm family of standards
+SHA3_384:latest member of the Secure Hash Algorithm family of standards
+SHA3_512:latest member of the Secure Hash Algorithm family of standards
+SHA512_224:SHA-2 family (Secure Hash Algorithm 2)
+SHA512_256:SHA-2 family (Secure Hash Algorithm 2)
 BLAKE2s_256:Message-Digest Algorithm 5
-BLAKE2b_256:Message-Digest Algorithm 5
-BLAKE2b_384:Message-Digest Algorithm 5
-BLAKE2b_512:Message-Digest Algorithm 5
+BLAKE2b_256:use 32-bit words and produce digest sizes of 256 bits
+BLAKE2b_384:use 64-bit words and produce digest sizes of 384 bits
+BLAKE2b_512:use 64-bit words and produce digest sizes of 512 bits

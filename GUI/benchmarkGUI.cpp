@@ -4,6 +4,8 @@
 #include <wx/srchctrl.h>
 #include <wx/thread.h>
 #include <wx/collpane.h>
+#include <wx/spinctrl.h>
+
 
 #include <fstream>
 #include <string>
@@ -91,13 +93,13 @@ MyFrame::MyFrame(const wxString& name, const wxPoint& pos, const wxSize& size)
   left = new wxPanel(main_splitter);
   wxPanel* bottom_right = new wxPanel(right_splitter);
   wxPanel* upper_mid = new wxPanel(upper_right_splitter);
-  wxPanel* top_right_right = new wxPanel(upper_right_splitter);
+  wxPanel* right_top_right = new wxPanel(upper_right_splitter);
 
   //////////////////////////////////////////////////////////////////////////////////////////////////////
   // Splitters Configuration
   //////////////////////////////////////////////////////////////////////////////////////////////////////
   upper_right_splitter->SetMinimumPaneSize(100);
-  upper_right_splitter->SplitVertically(upper_mid, top_right_right);
+  upper_right_splitter->SplitVertically(upper_mid, right_top_right);
   upper_right_splitter->SetSashGravity(1);
 
   right_splitter->SetSashGravity(0.8);
@@ -177,6 +179,15 @@ MyFrame::MyFrame(const wxString& name, const wxPoint& pos, const wxSize& size)
   go_options_win = new wxGoBenchOptions(options_pane_win);
 
   //////////////////////////////////////////////////////////////////////////////////////////////////////
+  // setting-up system information textCtrl and determining nbr cpu cores (max threads)
+  //////////////////////////////////////////////////////////////////////////////////////////////////////
+  sysInfo = new wxTextCtrl( right_top_right, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize,
+                            wxTE_READONLY | wxTE_MULTILINE);
+
+  populateSystemInfo();
+  go_options_win->inputThreads->SetRange(0, maxThreads);
+  
+  //////////////////////////////////////////////////////////////////////////////////////////////////////
   // Setting-up Chart
   //////////////////////////////////////////////////////////////////////////////////////////////////////
   chart_graph = new wxHorizontalBarChart(upper_mid);
@@ -188,6 +199,10 @@ MyFrame::MyFrame(const wxString& name, const wxPoint& pos, const wxSize& size)
   //////////////////////////////////////////////////////////////////////////////////////////////////////
   // Setting-up  Sizers
   //////////////////////////////////////////////////////////////////////////////////////////////////////
+  wxBoxSizer* infoSZ = new wxBoxSizer(wxVERTICAL);
+  infoSZ->Add(sysInfo, 1, wxEXPAND | wxALL, 5);
+  right_top_right->SetSizerAndFit(infoSZ);
+
   wxBoxSizer* choiceSZ = new wxBoxSizer(wxHORIZONTAL);
   choiceSZ->Add(dataType, 0, wxRIGHT, 5);
   choiceSZ->Add(graphType, 0);
@@ -461,14 +476,9 @@ std::string MyFrame::getGOCommand(const wxString& method) {
   }
 
   // if user provided the number of threads use the provided number, else use default option
-  if (!go_options_win->inputThreads->IsEmpty()) {
+  if (go_options_win->inputThreads->GetValue() != 0) {
     // append cmd with: go_options_win->inputThreads->GetValue();
     cmd << "-threads=" << go_options_win->inputThreads->GetValue();
-  }
-
-  // if user provided the number of times to run the benchmark use the provided number, else use default option
-  if (!go_options_win->inputBench->IsEmpty()) {
-    // append cmd with: go_options_win->inputBrench->GetValue();
   }
 
   return cmd.ToStdString();
@@ -541,4 +551,58 @@ void MyFrame::OnRemoveSelected(wxCommandEvent& e) {
 
 void MyFrame::OnClear(wxCommandEvent& e) {
   algoInfoList->DeleteAllItems();
+}
+
+void MyFrame::populateSystemInfo() {
+  #if defined(_WIN32)
+  #elif defined(__linux__)
+
+    // parsing operating system information
+    std::string line_string;
+    int line = 1;
+    for(std::ifstream os_info("/etc/os-release"); std::getline(os_info, line_string); ++line) {
+
+      // pretty name
+      if (line == 5) {
+        sysInfo->AppendText(wxString("Operating System : Linux"));
+        sysInfo->AppendText(wxT("\n"));
+        sysInfo->AppendText(wxString("Distribution : "));
+        sysInfo->AppendText(wxString(line_string.substr(line_string.find("\"")) ) );
+        sysInfo->AppendText(wxT("\n\n"));
+      } else if (line > 5) {
+        break;
+      }
+    }
+
+    // parsing necessary cpu information
+    line = 1;
+    for (std::ifstream cpu_info("/proc/cpuinfo"); std::getline(cpu_info, line_string); ++line) {
+
+      // model name
+      if (line == 5) {
+        sysInfo->AppendText(wxString(line_string));
+        sysInfo->AppendText(wxT("\n"));
+
+      // cache size
+      } else if (line == 9) {
+        sysInfo->AppendText(wxString(line_string));
+        sysInfo->AppendText(wxT("\n"));
+      // CPU cores
+      } else if (line == 13) {
+        sysInfo->AppendText(wxString(line_string));
+        sysInfo->AppendText(wxT("\n\n"));
+
+        line_string.erase(std::remove_if(line_string.begin(), line_string.end(), ::isspace), line_string.end());
+        maxThreads = std::stoul(line_string.substr(line_string.find(":") + 1));
+      }
+    }
+
+    // parsing necessary memory information
+    std::ifstream mem_info("/proc/meminfo");
+    std::getline(mem_info, line_string);             // total memory
+    sysInfo->AppendText(wxString(line_string));
+    sysInfo->AppendText(wxT("\n"));
+
+  #elif defined(__APPLE__) && defined(__MACH__)
+  #endif
 }
