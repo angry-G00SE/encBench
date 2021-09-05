@@ -14,3 +14,13 @@ BLAKE2s_256:Message-Digest Algorithm 5
 BLAKE2b_256:use 32-bit words and produce digest sizes of 256 bits
 BLAKE2b_384:use 64-bit words and produce digest sizes of 384 bits
 BLAKE2b_512:use 64-bit words and produce digest sizes of 512 bits
+ED25519_Sign:elliptic curve signing algorithm using EdDSA and Curve25519
+ED25519_Verify: 
+AES_Encrypt_128:Advanced Encryption Standard key lengths: 128
+AES_Encrypt_192:Advanced Encryption Standard key lengths: 192
+AES_Encrypt_256:Advanced Encryption Standard key lengths: 256
+AES_Decrypt_128:Advanced Encryption Standard key lengths: 128
+AES_Decrypt_192:Advanced Encryption Standard key lengths: 192
+AES_Decrypt_256:Advanced Encryption Standard key lengths: 256
+RSA_Encrypt:Rivest–Shamir–Adleman
+RSA_Decrypt:Rivest–Shamir–Adleman
